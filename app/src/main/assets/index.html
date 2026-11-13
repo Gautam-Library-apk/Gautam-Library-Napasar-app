@@ -1,1 +1,2968 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gautam Library Napasar - 60 Seat Management System</title>
+    <!-- Professional PWA & Android Meta Tags -->
+    <meta name="theme-color" content="#060b18">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="application-name" content="Gautam Library">
+    
+    <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22Gautam%20Library%20Napasar%22%2C%22short_name%22%3A%22GautamLibrary%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23060b18%22%2C%22theme_color%22%3A%22%230f172a%22%2C%22orientation%22%3A%22portrait%22%2C%22icons%22%3A%5B%5D%7D">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Anton&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #050914;
+            background-image: 
+                radial-gradient(at 12% 10%, rgba(30, 64, 175, 0.38) 0px, transparent 52%),
+                radial-gradient(at 88% 15%, rgba(245, 184, 46, 0.14) 0px, transparent 48%),
+                radial-gradient(at 50% 90%, rgba(15, 23, 42, 0.95) 0px, transparent 65%),
+                linear-gradient(180deg, #060b19 0%, #0a1329 50%, #050914 100%);
+            background-attachment: fixed;
+            color: #f8fafc;
+            min-height: 100vh;
+        }
+        .brand-logo-text {
+            font-family: 'Anton', 'Outfit', sans-serif;
+            letter-spacing: 1.4px;
+            background: linear-gradient(180deg, #FFE07D 0%, #F5B82E 52%, #C58917 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        @media print {
+            body * {
+                visibility: hidden !important;
+            }
+            #receiptPrintArea, #receiptPrintArea * {
+                visibility: visible !important;
+            }
+            #receiptPrintArea {
+                position: fixed !important;
+                left: 50% !important;
+                top: 20px !important;
+                transform: translateX(-50%) !important;
+                width: 92% !important;
+                max-width: 420px !important;
+                box-shadow: none !important;
+            }
+        }
+        .gold-btn {
+            background: linear-gradient(135deg, #F9C846 0%, #E09F1F 55%, #B87910 100%);
+            color: #060913;
+            box-shadow: 0 4px 15px -3px rgba(245, 184, 46, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.45);
+        }
+        .gold-btn:hover {
+            background: linear-gradient(135deg, #FFE074 0%, #ECA926 55%, #C98718 100%);
+            box-shadow: 0 6px 20px -2px rgba(245, 184, 46, 0.55), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+        }
+        /* Ultra-Modern Frosted Glassmorphism Cards */
+        .blue-glass {
+            background: linear-gradient(155deg, rgba(22, 37, 77, 0.62) 0%, rgba(10, 17, 36, 0.84) 100%);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border: 1px solid rgba(245, 184, 46, 0.24);
+            box-shadow: 0 14px 34px -10px rgba(0, 0, 0, 0.65), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+        }
+        .blue-glass-header {
+            background: linear-gradient(90deg, rgba(5, 9, 20, 0.92) 0%, rgba(12, 21, 46, 0.94) 50%, rgba(5, 9, 20, 0.92) 100%);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid rgba(245, 184, 46, 0.35);
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.75);
+        }
+        .seat-card-hover {
+            transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease, border-color 0.22s ease;
+            will-change: transform;
+        }
+        .seat-card-hover:hover {
+            transform: translateY(-4px) scale(1.018);
+        }
+        .seat-card-hover:active {
+            transform: scale(0.97);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #060b18;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e3a8a;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f5b82e;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col antialiased selection:bg-amber-500 selection:text-slate-950 relative overflow-x-hidden">
 
+    <!-- Ambient Spotlight Glows -->
+    <div class="fixed top-[-140px] left-[-100px] w-96 h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none z-0"></div>
+    <div class="fixed top-[20%] right-[-140px] w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none z-0"></div>
+    <div class="fixed bottom-[-140px] left-[25%] w-96 h-96 bg-indigo-600/15 rounded-full blur-3xl pointer-events-none z-0"></div>
+
+    <!-- Top Navigation Header with Golden Lotus Logo & Clean Modern Actions -->
+    <header class="blue-glass-header sticky top-0 z-30 flex-shrink-0">
+        <div class="max-w-7xl mx-auto px-3 sm:px-4 py-2.5 flex items-center justify-between gap-2">
+            
+            <!-- Brand Logo & Title (Clean NAPASAR Subtitle without Saved Offline text) -->
+            <div class="flex items-center gap-2.5 sm:gap-3.5 min-w-0">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center flex-shrink-0 relative">
+                    <img id="brandLogoImg" src="96224.png" alt="Gautam Library Logo" class="w-full h-full object-contain hidden drop-shadow-[0_2px_12px_rgba(245,184,46,0.5)]" onload="this.classList.remove('hidden'); document.getElementById('tracedLotusSvg').classList.add('hidden');" onerror="this.classList.add('hidden'); document.getElementById('tracedLotusSvg').classList.remove('hidden');">
+                    <!-- Exact 1:1 Pixel-Traced Vector of 96224.png (1024x1024 Coordinates) -->
+                    <svg id="tracedLotusSvg" viewBox="0 90 1024 850" class="w-full h-full drop-shadow-[0_2px_12px_rgba(245,184,46,0.45)]">
+                        <defs>
+                            <linearGradient id="newLotusGoldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#FFE07D" />
+                                <stop offset="50%" stop-color="#F5B82E" />
+                                <stop offset="100%" stop-color="#C58917" />
+                            </linearGradient>
+                        </defs>
+                        <!-- Left & Right Solid Base Wedges -->
+                        <path d="M 320,900 C 375,914 435,916 490,916 L 463,795 L 368,855 Z" fill="url(#newLotusGoldGrad)" />
+                        <path d="M 704,900 C 649,914 589,916 534,916 L 561,795 L 656,855 Z" fill="url(#newLotusGoldGrad)" />
+                        
+                        <g fill="none" stroke="url(#newLotusGoldGrad)" stroke-width="38" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10">
+                            <!-- Center Tall Petal -->
+                            <path d="M 466,905 C 446,720 462,605 512,510 C 562,605 578,720 558,905" />
+                            <path d="M 418,895 C 232,635 280,340 512,135 C 744,340 792,635 606,895" />
+                            <!-- Left Mid Petal -->
+                            <path d="M 378,895 C 190,715 198,485 198,318 C 358,342 465,418 512,510" />
+                            <!-- Right Mid Petal -->
+                            <path d="M 646,895 C 834,715 826,485 826,318 C 666,342 559,418 512,510" />
+                            <!-- Left Outer Petal -->
+                            <path d="M 472,900 C 175,900 48,725 48,476 C 238,470 388,565 456,725" />
+                            <!-- Right Outer Petal -->
+                            <path d="M 552,900 C 849,900 976,725 976,476 C 786,470 636,565 568,725" />
+                        </g>
+                    </svg>
+                </div>
+                <div class="min-w-0">
+                    <div class="flex flex-col">
+                        <h1 class="brand-logo-text text-xl sm:text-2xl md:text-3xl font-normal tracking-wider leading-none truncate drop-shadow-xs">GAUTAM LIBRARY</h1>
+                        <div class="flex items-center mt-1">
+                            <span class="text-[10px] sm:text-xs font-extrabold text-[#F5B82E] tracking-[0.44em] uppercase leading-none">NAPASAR</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mobile Actions (APK Button Removed) -->
+            <div class="flex sm:hidden items-center gap-1.5 flex-shrink-0">
+                <button onclick="openBackupModal()" class="px-3 py-1.5 gold-btn rounded-xl text-[11px] font-extrabold transition cursor-pointer">
+                    Backup
+                </button>
+                <button onclick="exportCSV()" class="px-3 py-1.5 bg-slate-900/90 hover:bg-slate-800 text-amber-200 border border-amber-500/40 rounded-xl text-[11px] font-bold transition cursor-pointer">
+                    CSV
+                </button>
+            </div>
+
+            <!-- Desktop Action Buttons (Install App / APK Button Removed) -->
+            <div class="hidden sm:flex items-center gap-2.5 flex-shrink-0">
+                <button onclick="openBackupModal()" class="gold-btn font-extrabold px-4 py-2 rounded-xl transition text-xs cursor-pointer">
+                    JSON Backup / Restore
+                </button>
+                <button onclick="exportCSV()" class="bg-slate-900/80 hover:bg-slate-800 text-amber-200 font-bold px-4 py-2 rounded-xl border border-amber-500/35 shadow-md transition text-xs cursor-pointer">
+                    Excel (CSV)
+                </button>
+                <button onclick="openResetModal()" class="bg-red-500/15 hover:bg-red-500/30 text-red-300 font-bold px-3.5 py-2 rounded-xl border border-red-500/30 transition text-xs cursor-pointer" title="Reset All Data">
+                    Reset
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-2.5 sm:px-4 py-3 sm:py-5 flex-grow w-full space-y-3.5 sm:space-y-5 relative z-10">
+
+        <!-- Modern Dashboard Summary Cards -->
+        <section class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+            <!-- Card 1: Total Seats -->
+            <div class="blue-glass p-3 sm:p-4 rounded-2xl flex items-center justify-between border-l-4 border-l-[#F5B82E] relative overflow-hidden">
+                <div class="absolute -right-6 -top-6 w-20 h-20 bg-amber-500/10 rounded-full blur-xl pointer-events-none"></div>
+                <div class="min-w-0">
+                    <p class="text-[10px] sm:text-[11px] font-bold text-slate-300 uppercase tracking-wider truncate">Total Seats</p>
+                    <h3 class="text-xl sm:text-2xl font-black text-white leading-tight mt-0.5">60</h3>
+                    <p class="text-[10px] sm:text-xs text-[#F5B82E] font-bold truncate mt-0.5">
+                        <span id="statBooked">0</span> Full &bull; <span id="statAvailable">60</span> Free
+                    </p>
+                </div>
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-[#F5B82E]/25 to-amber-700/10 border border-[#F5B82E]/45 flex items-center justify-center p-1.5 sm:p-2 shadow-inner flex-shrink-0">
+                    <svg viewBox="0 0 64 64" class="w-6 h-6 sm:w-7 sm:h-7">
+                        <rect x="16" y="10" width="32" height="24" rx="6" fill="#F5B82E" fill-opacity="0.3" stroke="#F5B82E" stroke-width="4"/>
+                        <path d="M10,26 L16,26 L16,42 L48,42 L48,26 L54,26 C56,26 58,28 58,30 L58,44 C58,47 55,48 52,48 L12,48 C9,48 6,47 6,44 L6,30 C6,28 8,26 10,26 Z" fill="#F5B82E"/>
+                        <line x1="16" y1="48" x2="14" y2="56" stroke="#F5B82E" stroke-width="4" stroke-linecap="round"/>
+                        <line x1="48" y1="48" x2="50" y2="56" stroke="#F5B82E" stroke-width="4" stroke-linecap="round"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Card 2: Active Students -->
+            <div class="blue-glass p-3 sm:p-4 rounded-2xl flex items-center justify-between border-l-4 border-l-sky-400 relative overflow-hidden">
+                <div class="absolute -right-6 -top-6 w-20 h-20 bg-sky-500/10 rounded-full blur-xl pointer-events-none"></div>
+                <div class="min-w-0">
+                    <p class="text-[10px] sm:text-[11px] font-bold text-slate-300 uppercase tracking-wider truncate">Students</p>
+                    <h3 id="statActiveStudents" class="text-xl sm:text-2xl font-black text-white leading-tight mt-0.5">0</h3>
+                    <p class="text-[10px] sm:text-xs text-sky-300 font-semibold truncate mt-0.5">Active Enrolled</p>
+                </div>
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-sky-400/25 to-blue-700/10 border border-sky-400/45 flex items-center justify-center p-1.5 sm:p-2 shadow-inner flex-shrink-0">
+                    <svg viewBox="0 0 64 64" class="w-6 h-6 sm:w-7 sm:h-7">
+                        <polygon points="32,8 8,20 32,32 56,20" fill="#38bdf8"/>
+                        <path d="M50,23 L50,37" stroke="#bae6fd" stroke-width="3.5" stroke-linecap="round"/>
+                        <circle cx="32" cy="36" r="8" fill="#bae6fd"/>
+                        <path d="M16,56 C16,45 48,45 48,56 Z" fill="#38bdf8"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Card 3: Fee Pending (Red Alert Theme) -->
+            <div onclick="filterByPendingCard()" class="blue-glass p-3 sm:p-4 rounded-2xl flex items-center justify-between border-l-4 border-l-rose-500 cursor-pointer hover:border-rose-400 transition group relative overflow-hidden" title="Click to view pending fee seats">
+                <div class="absolute -right-6 -top-6 w-20 h-20 bg-rose-500/10 rounded-full blur-xl pointer-events-none"></div>
+                <div class="min-w-0">
+                    <p class="text-[10px] sm:text-[11px] font-bold text-rose-300 uppercase tracking-wider truncate">Fee Pending</p>
+                    <h3 id="statPendingCount" class="text-xl sm:text-2xl font-black text-rose-500 leading-tight mt-0.5">0</h3>
+                    <p id="statPendingAmountSub" class="text-[10px] sm:text-xs text-rose-300 font-semibold truncate mt-0.5">Due List</p>
+                </div>
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-rose-500/25 to-red-800/10 border border-rose-500/45 flex items-center justify-center p-1.5 sm:p-2 shadow-inner flex-shrink-0 group-hover:scale-105 transition">
+                    <svg viewBox="0 0 64 64" class="w-6 h-6 sm:w-7 sm:h-7">
+                        <path d="M32,10 C21,10 16,19 16,30 L16,42 L10,48 L54,48 L48,42 L48,30 C48,19 43,10 32,10 Z" fill="#f43f5e"/>
+                        <path d="M26,50 C26,54 38,54 38,50" stroke="#fda4af" stroke-width="4" stroke-linecap="round" fill="none"/>
+                        <circle cx="46" cy="18" r="10" fill="#e11d48" stroke="#ffffff" stroke-width="2.5"/>
+                        <path d="M46,14 L46,19 M46,23 L46,23.5" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Card 4: Current Month Collection -->
+            <div onclick="openCollectionModal()" class="blue-glass p-3 sm:p-4 rounded-2xl flex items-center justify-between border-l-4 border-l-emerald-400 cursor-pointer hover:border-emerald-400 hover:shadow-[0_0_24px_rgba(16,185,129,0.22)] transition group relative overflow-hidden" title="Click for Current Month & All-Time Fee Breakdown">
+                <div class="absolute -right-6 -top-6 w-20 h-20 bg-emerald-500/10 rounded-full blur-xl pointer-events-none"></div>
+                <div class="min-w-0">
+                    <p id="statCurMonthTitle" class="text-[10px] sm:text-[11px] font-bold text-slate-300 uppercase tracking-wider truncate">This Month</p>
+                    <h3 id="statTotalCollection" class="text-xl sm:text-2xl font-black text-emerald-400 leading-tight truncate mt-0.5">₹0</h3>
+                    <p id="statCurMonthSub" class="text-[10px] sm:text-xs text-emerald-300 font-semibold truncate mt-0.5">Due: ₹0 &bull; Total: ₹0</p>
+                </div>
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-emerald-400/25 to-teal-700/10 border border-emerald-400/45 flex items-center justify-center p-1.5 sm:p-2 shadow-inner flex-shrink-0 group-hover:scale-105 transition">
+                    <svg viewBox="0 0 64 64" class="w-6 h-6 sm:w-7 sm:h-7">
+                        <circle cx="32" cy="32" r="24" fill="#10b981" fill-opacity="0.25" stroke="#34d399" stroke-width="4"/>
+                        <path d="M23,21 L41,21 M23,28 L41,28 M23,21 L31,21 C36,21 36,34 31,34 L23,34 L38,46" stroke="#34d399" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- View Switcher & Filter Bar -->
+        <section class="blue-glass p-2.5 sm:p-3 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-2.5">
+            <div class="flex items-center gap-2 w-full md:w-auto">
+                <button onclick="switchTab('grid')" id="tabBtnGrid" class="flex-1 md:flex-none px-4 py-2 rounded-xl font-extrabold text-xs transition gold-btn cursor-pointer">
+                    60 Seats Grid
+                </button>
+                <button onclick="switchTab('list')" id="tabBtnList" class="flex-1 md:flex-none px-4 py-2 rounded-xl font-bold text-xs transition bg-slate-900/80 text-slate-200 hover:bg-slate-800 border border-slate-700/80 cursor-pointer">
+                    Student List
+                </button>
+            </div>
+
+            <!-- Filter & Search -->
+            <div class="flex items-center gap-2 w-full md:w-auto">
+                <select id="statusFilter" onchange="handleSearch()" class="px-3 py-2 bg-slate-950/90 border border-amber-500/35 rounded-xl text-xs text-slate-100 font-bold focus:outline-none focus:ring-2 focus:ring-[#F5B82E] cursor-pointer">
+                    <option value="all">All (60)</option>
+                    <option value="available">Vacant</option>
+                    <option value="booked">Occupied</option>
+                    <option value="pending">Pending</option>
+                </select>
+                <div class="relative flex-1 md:w-64">
+                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Search name, mobile or seat..." class="w-full px-3.5 py-2 bg-slate-950/90 border border-amber-500/35 rounded-xl text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#F5B82E] transition">
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 1: 60 SEATS INTERACTIVE GRID VIEW -->
+        <section id="seatsGridView" class="space-y-2.5">
+            <div class="flex flex-wrap items-center justify-between gap-2 px-1">
+                <h2 class="font-extrabold text-white text-xs sm:text-sm tracking-wide">Floor Seating Plan (1 – 60)</h2>
+                <!-- Color Legend -->
+                <div class="flex items-center gap-3 text-[11px] font-bold bg-slate-950/90 px-3.5 py-1.5 rounded-xl border border-amber-500/30 shadow-inner">
+                    <div class="flex items-center gap-1.5 text-emerald-400"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block shadow-[0_0_8px_#10b981]"></span> Vacant</div>
+                    <div class="flex items-center gap-1.5 text-[#F5B82E]"><span class="w-2.5 h-2.5 rounded-full bg-[#F5B82E] inline-block shadow-[0_0_8px_#F5B82E]"></span> Paid</div>
+                    <div class="flex items-center gap-1.5 text-rose-400"><span class="w-2.5 h-2.5 rounded-full bg-rose-600 inline-block animate-pulse shadow-[0_0_8px_#e11d48]"></span> Pending</div>
+                </div>
+            </div>
+
+            <!-- Balanced Medium-Sized Seat Cards Grid -->
+            <div id="seatsGridContainer" class="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-2.5 sm:gap-3.5">
+                <!-- Dynamically populated via JS -->
+            </div>
+        </section>
+
+        <!-- TAB 2: STUDENT DIRECTORY & FEE LEDGER TABLE -->
+        <section id="studentListView" class="space-y-4 hidden">
+            <div class="blue-glass rounded-2xl overflow-hidden">
+                <div class="p-4 border-b border-slate-800/90 flex items-center justify-between bg-slate-950/60">
+                    <h3 class="font-extrabold text-white text-sm sm:text-base">Enrolled Students &amp; Monthly Fee Ledger</h3>
+                    <span id="studentCountBadge" class="text-xs gold-btn px-3 py-1 rounded-full font-extrabold">0 Students</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-slate-950/90 text-slate-300 font-extrabold border-b border-slate-800 uppercase tracking-wider text-[11px]">
+                                <th class="p-3.5">Seat</th>
+                                <th class="p-3.5">Student Name</th>
+                                <th class="p-3.5">Mobile</th>
+                                <th class="p-3.5">Course &amp; Shift</th>
+                                <th class="p-3.5">Paid Months</th>
+                                <th class="p-3.5">Total Paid</th>
+                                <th class="p-3.5 text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentTableBody" class="divide-y divide-slate-800/60 text-slate-100 font-medium">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="blue-glass-header mt-auto py-4 text-center text-xs text-slate-300 font-semibold flex-shrink-0 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <div>
+                <span class="font-bold text-[#F5B82E]">GAUTAM LIBRARY, NAPASAR</span> &bull; Self-Study &amp; Career Hub
+            </div>
+            <p class="text-[11px] text-slate-400">60-Seat Management System</p>
+        </div>
+    </footer>
+
+    <!-- MODAL: STUDENT PROFILE & MONTHLY FEE LEDGER -->
+    <div id="studentModal" onclick="if(event.target === this) closeStudentModal()" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-[#0b1326] text-white rounded-3xl max-w-2xl w-full p-5 sm:p-7 shadow-2xl border border-[#F5B82E]/40 space-y-5 max-h-[92vh] overflow-y-auto">
+            
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div class="flex items-center gap-3.5">
+                    <div id="modalSeatBadge" class="px-4 py-2 rounded-2xl gold-btn font-extrabold flex items-center justify-center text-lg shadow-lg">
+                        #1
+                    </div>
+                    <div>
+                        <h3 id="modalTitle" class="font-extrabold text-white text-base sm:text-lg">Seat #1 Management</h3>
+                        <p id="modalSubTitle" class="text-xs text-amber-300 font-semibold">Update student profile, shift or log monthly fee payments</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeStudentModal()" class="text-slate-300 hover:text-white px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-xs font-bold transition cursor-pointer">
+                    Close
+                </button>
+            </div>
+
+            <!-- Modal Sub-Tabs (Profile vs Monthly Fee Ledger) -->
+            <div class="flex items-center gap-2 bg-slate-950 p-1.5 rounded-2xl border border-slate-800">
+                <button type="button" onclick="switchModalTab('profile')" id="modalTabBtnProfile" class="flex-1 py-2.5 px-3 rounded-xl font-extrabold text-xs transition gold-btn shadow-md cursor-pointer">
+                    1. Student Profile
+                </button>
+                <button type="button" onclick="switchModalTab('fees')" id="modalTabBtnFees" class="flex-1 py-2.5 px-3 rounded-xl font-bold text-xs transition text-slate-300 hover:text-white cursor-pointer">
+                    2. Monthly Fee Ledger
+                </button>
+            </div>
+
+            <!-- TAB CONTENT 1: PROFILE FORM -->
+            <div id="modalTabProfileContent" class="space-y-4">
+                <form id="studentForm" onsubmit="saveStudentProfile(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-200 mb-1.5">Student Full Name *</label>
+                            <input type="text" id="inputName" required oninput="handleLiveNameHeaderUpdate()" placeholder="e.g. Rahul Sharma" class="w-full px-3.5 py-2.5 bg-slate-950/90 border border-slate-700 rounded-xl text-xs text-white font-semibold placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#F5B82E] transition">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-200 mb-1.5">Father's Name</label>
+                            <input type="text" id="inputFatherName" placeholder="e.g. Shri Mohan Lal" class="w-full px-3.5 py-2.5 bg-slate-950/90 border border-slate-700 rounded-xl text-xs text-white font-semibold placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#F5B82E] transition">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-200 mb-1.5">Mobile Number *</label>
+                            <input type="tel" id="inputMobile" required pattern="[0-9+\-\s]{10,15}" placeholder="10-digit mobile number" class="w-full px-3.5 py-2.5 bg-slate-950/90 border border-slate-700 rounded-xl text-xs text-white font-semibold placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#F5B82E] transition">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-200 mb-1.5">Course / Target Exam</label>
+                            <input type="text" id="inputCourse" oninput="handleLiveNameHeaderUpdate()" placeholder="e.g. RAS / NEET / SSC / Railway" class="w-full px-3.5 py-2.5 bg-slate-950/90 border border-slate-700 rounded-xl text-xs text-white font-semibold placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#F5B82E] transition">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-200 mb-1.5">Study Shift *</label>
+                            <select id="inputShift" onchange="handleShiftChange()" class="w-full px-3.5 py-2.5 bg-slate-950/90 border border-slate-700 rounded-xl text-xs text-white font-semibold focus:outline-none focus:ring-2 focus:ring-[#F5B82E] transition">
+                                <option value="Full Day">Full Day (All Hours)</option>
+                                <option value="Morning (6 AM - 12 PM)">Half Day - Morning (6 AM - 12 PM)</option>
+                                <option value="Afternoon (12 PM - 6 PM)">Half Day - Afternoon (12 PM - 6 PM)</option>
+                                <option value="Evening (6 PM - 11 PM)">Half Day - Evening (6 PM - 11 PM)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-200 mb-1.5">Applicable Fee Slab (₹)</label>
+                            <select id="inputMonthlyFee" onchange="renderFeeHistoryTable(true)" class="w-full px-3.5 py-2.5 bg-slate-950/90 border border-slate-700 rounded-xl text-xs text-white font-semibold focus:outline-none focus:ring-2 focus:ring-[#F5B82E] transition">
+                                <option value="900">Full Day Summer - ₹900/m (Feb–Oct)</option>
+                                <option value="750">Full Day Winter - ₹750/m (Nov–Jan)</option>
+                                <option value="500">Half Shift Summer - ₹500/m (Feb–Oct)</option>
+                                <option value="400">Half Shift Winter - ₹400/m (Nov–Jan)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-200 mb-1.5">Joining Date</label>
+                            <input type="date" id="inputJoiningDate" onchange="handleJoiningDateChange()" class="w-full px-3.5 py-2.5 bg-slate-950/90 border border-slate-700 rounded-xl text-xs text-white font-semibold focus:outline-none focus:ring-2 focus:ring-[#F5B82E] transition">
+                        </div>
+                    </div>
+
+                    <!-- Inline Vacate Confirmation Box -->
+                    <div id="vacateConfirmBox" class="hidden bg-rose-950/90 border-2 border-rose-500 p-4 rounded-2xl space-y-3">
+                        <div>
+                            <p class="text-xs font-extrabold text-white">Are you sure you want to vacate this seat?</p>
+                            <p class="text-[11px] text-rose-300 mt-0.5">This will remove the student record and mark the seat as Vacant.</p>
+                        </div>
+                        <div class="flex items-center justify-end gap-2.5">
+                            <button type="button" onclick="cancelVacateSeat()" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold cursor-pointer">
+                                Cancel
+                            </button>
+                            <button type="button" onclick="confirmVacateSeatNow()" class="px-4 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-extrabold shadow-lg cursor-pointer">
+                                Yes, Vacate Seat
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Form Footer Actions -->
+                    <div class="pt-3 flex flex-wrap items-center justify-between gap-2 border-t border-slate-800">
+                        <button type="button" id="btnVacateSeat" onclick="askVacateCurrentSeat()" class="px-4 py-2.5 bg-rose-500/20 hover:bg-rose-600 text-rose-300 hover:text-white font-extrabold rounded-xl text-xs transition cursor-pointer border border-rose-500/40">
+                            Vacate Seat
+                        </button>
+                        <div class="flex items-center gap-2.5 ml-auto">
+                            <button type="button" onclick="closeStudentModal()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-xl text-xs transition cursor-pointer">
+                                Cancel
+                            </button>
+                            <button type="submit" class="px-5 py-2.5 gold-btn font-extrabold rounded-xl text-xs shadow-lg transition cursor-pointer">
+                                Save Student
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- TAB CONTENT 2: MONTHLY FEE LEDGER -->
+            <div id="modalTabFeesContent" class="space-y-4 hidden">
+                <!-- Smart Current Month & Pending Status Banner -->
+                <div id="feeModalStatusBanner" class="bg-slate-950 border border-slate-800 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <p class="text-xs text-slate-300 font-bold">Current Month (<span id="currentMonthLabelBanner" class="text-white font-extrabold">Nov 2026</span>):</p>
+                            <span id="currentMonthStatusPill" class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-500/20 text-rose-300 border border-rose-500/40">
+                                CURRENT MONTH DUE
+                            </span>
+                        </div>
+                        <h4 id="feeLedgerSummaryText" class="text-base sm:text-lg font-extrabold text-[#F5B82E] mt-1">0 Months Paid (₹0)</h4>
+                        <p id="feePendingMonthsDetail" class="text-[11px] text-rose-300 font-semibold mt-0.5"></p>
+                    </div>
+                    <button type="button" onclick="sendWhatsAppReminderActive()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold px-4 py-2.5 rounded-xl text-xs shadow-md transition cursor-pointer">
+                        Send WhatsApp Fee Reminder
+                    </button>
+                </div>
+
+                <!-- Add New Month Fee Entry Form with Seasonal Slab Selector -->
+                <div class="bg-slate-900/70 p-4 rounded-2xl border border-slate-800 space-y-3.5">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <div class="flex items-center gap-2">
+                            <p class="font-extrabold text-white text-xs">Record Fee Payment (Seasonal Slab)</p>
+                            <span id="detectedSeasonBadge" class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-500/20 text-[#F5B82E] border border-amber-500/40">
+                                ☀️ Summer Slab
+                            </span>
+                        </div>
+                        <button type="button" onclick="setFeeInputToCurrentMonth()" class="text-[11px] bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold px-2.5 py-1 rounded-lg border border-slate-700 transition cursor-pointer">
+                            Select Current Month (<span id="quickSelectCurMonthBtn">Nov 2026</span>)
+                        </button>
+                    </div>
+
+                    <!-- Interactive Package Slab Buttons -->
+                    <div class="space-y-1.5">
+                        <label id="slabSectionLabel" class="block text-[11px] font-bold text-slate-300">Select Fee Slab Package (Auto-fills Months &amp; Amount)</label>
+                        <div class="grid grid-cols-3 gap-2" id="slabPackageButtonsContainer">
+                            <button type="button" onclick="selectFeeSlabPackage(1)" id="slabBtn1" class="p-2.5 rounded-xl border-2 border-[#F5B82E] bg-[#F5B82E]/20 text-left transition cursor-pointer">
+                                <p id="slabBtn1Title" class="text-[10px] font-extrabold text-amber-200 uppercase">1 Month Plan</p>
+                                <p id="slabBtn1Price" class="text-sm sm:text-base font-black text-white mt-0.5">₹900</p>
+                                <p id="slabBtn1Sub" class="text-[9px] text-slate-300 font-semibold">Single Month</p>
+                            </button>
+                            <button type="button" onclick="selectFeeSlabPackage(2)" id="slabBtn2" class="p-2.5 rounded-xl border border-slate-700 bg-slate-950/70 hover:border-slate-500 text-left transition cursor-pointer">
+                                <p class="text-[10px] font-extrabold text-sky-300 uppercase">2 Months Together</p>
+                                <p id="slabBtn2Price" class="text-sm sm:text-base font-black text-white mt-0.5">₹1700</p>
+                                <p id="slabBtn2Sub" class="text-[9px] text-emerald-300 font-semibold">Save ₹100</p>
+                            </button>
+                            <button type="button" onclick="selectFeeSlabPackage(3)" id="slabBtn3" class="p-2.5 rounded-xl border border-slate-700 bg-slate-950/70 hover:border-slate-500 text-left transition cursor-pointer">
+                                <p class="text-[10px] font-extrabold text-amber-300 uppercase">3 Months Together</p>
+                                <p id="slabBtn3Price" class="text-sm sm:text-base font-black text-white mt-0.5">₹2500</p>
+                                <p id="slabBtn3Sub" class="text-[9px] text-emerald-300 font-semibold">Best Value Combo</p>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Starting Month</label>
+                            <select id="feeMonthInput" onchange="handleStartingMonthChange()" class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white font-semibold focus:outline-none focus:ring-2 focus:ring-[#F5B82E]">
+                                <!-- Dynamically populated with months -->
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Total Package (₹)</label>
+                            <input type="number" id="feeAmountInput" value="900" class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white font-extrabold">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Payment Date</label>
+                            <input type="date" id="feeDateInput" class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white font-semibold">
+                        </div>
+                        <div class="flex items-end">
+                            <button type="button" onclick="addMonthlyFeeEntry()" id="addFeeSubmitBtn" class="w-full py-2 gold-btn font-extrabold rounded-xl text-xs shadow-md transition cursor-pointer">
+                                + Add 1M Payment
+                            </button>
+                        </div>
+                    </div>
+                    <p id="selectedPackagePreviewText" class="text-[11px] text-emerald-300 font-semibold"></p>
+                </div>
+
+                <!-- Fee History Table -->
+                <div class="bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden">
+                    <div class="p-3 bg-slate-900/70 border-b border-slate-800 flex items-center justify-between">
+                        <span class="font-extrabold text-slate-100 text-xs">Payment History</span>
+                        <span id="feeCountBadge" class="text-[11px] gold-btn px-2.5 py-0.5 rounded-full font-extrabold">0 Entries</span>
+                    </div>
+                    <div class="max-h-48 overflow-y-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-slate-950 text-slate-400 font-bold border-b border-slate-800">
+                                    <th class="p-3">Month</th>
+                                    <th class="p-3">Amount Paid</th>
+                                    <th class="p-3">Payment Date</th>
+                                    <th class="p-3 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="feeHistoryTableBody" class="divide-y divide-slate-800/70 text-slate-100 font-medium">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex justify-end">
+                    <button type="button" onclick="closeStudentModal()" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs transition cursor-pointer">
+                        Done
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MODAL: FEE COLLECTION REPORT & BREAKDOWN (Current Month vs Pending vs All-Time) -->
+    <div id="collectionModal" onclick="if(event.target === this) closeCollectionModal()" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-[#0b1326] text-white rounded-3xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl border border-emerald-500/40 space-y-4 max-h-[92vh] overflow-y-auto">
+            <!-- Header -->
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3.5">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-emerald-500/20 border border-emerald-400/50 flex items-center justify-center text-emerald-400 font-extrabold text-xl shadow-md">
+                        ₹
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-white text-base sm:text-lg">Fee Collection &amp; Revenue Details</h3>
+                        <p id="collectionModalSubTitle" class="text-xs text-emerald-400 font-semibold">Current Month Breakdown &amp; All-Time Library Ledger</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeCollectionModal()" class="text-slate-300 hover:text-white px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold cursor-pointer">
+                    Close
+                </button>
+            </div>
+
+            <!-- 4 Key Financial Cards -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+                <!-- 1. Current Month Collected -->
+                <div class="bg-emerald-950/40 border border-emerald-500/40 p-3.5 rounded-2xl">
+                    <p id="colModalCurMonthLabel" class="text-[10px] font-extrabold text-emerald-300 uppercase tracking-wider">This Month Paid</p>
+                    <h4 id="colModalCurMonthCollected" class="text-xl sm:text-2xl font-black text-emerald-400 mt-1">₹0</h4>
+                    <p id="colModalCurMonthStudentsPaid" class="text-[11px] text-emerald-200/90 font-semibold mt-0.5">0 Students Paid</p>
+                </div>
+
+                <!-- 2. Current Month Pending -->
+                <div class="bg-rose-950/40 border border-rose-500/40 p-3.5 rounded-2xl">
+                    <p class="text-[10px] font-extrabold text-rose-300 uppercase tracking-wider">This Month Due</p>
+                    <h4 id="colModalCurMonthPending" class="text-xl sm:text-2xl font-black text-rose-400 mt-1">₹0</h4>
+                    <p id="colModalCurMonthStudentsDue" class="text-[11px] text-rose-200/90 font-semibold mt-0.5">0 Students Due</p>
+                </div>
+
+                <!-- 3. Expected Target This Month -->
+                <div class="bg-slate-900/90 border border-sky-500/35 p-3.5 rounded-2xl">
+                    <p class="text-[10px] font-extrabold text-sky-300 uppercase tracking-wider">Monthly Target</p>
+                    <h4 id="colModalMonthlyTarget" class="text-xl sm:text-2xl font-black text-white mt-1">₹0</h4>
+                    <p id="colModalTotalPendingAllMonths" class="text-[11px] text-amber-300 font-semibold mt-0.5">Total Arrears: ₹0</p>
+                </div>
+
+                <!-- 4. All-Time Total Collected -->
+                <div class="bg-amber-950/35 border border-[#F5B82E]/50 p-3.5 rounded-2xl">
+                    <p class="text-[10px] font-extrabold text-[#F5B82E] uppercase tracking-wider">All-Time Total</p>
+                    <h4 id="colModalAllTimeTotal" class="text-xl sm:text-2xl font-black text-[#F5B82E] mt-1">₹0</h4>
+                    <p id="colModalAllTimeEntries" class="text-[11px] text-amber-200 font-semibold mt-0.5">0 Total Receipts</p>
+                </div>
+            </div>
+
+            <!-- Current Month Collection Progress Bar -->
+            <div class="bg-slate-950 border border-slate-800 p-4 rounded-2xl space-y-2">
+                <div class="flex items-center justify-between text-xs font-extrabold">
+                    <span class="text-slate-300">Current Month Collection Progress (<span id="colModalProgressMonthName" class="text-white">Nov 2026</span>)</span>
+                    <span id="colModalProgressPercent" class="text-emerald-400">0% Complete</span>
+                </div>
+                <div class="w-full h-3 bg-slate-900 rounded-full overflow-hidden border border-slate-800 p-0.5">
+                    <div id="colModalProgressBar" class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Two-Column Lists: Current Month Pending Students vs Month-wise Breakdown -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <!-- Pending Students List for Current Month -->
+                <div class="bg-slate-950 border border-rose-500/30 rounded-2xl overflow-hidden flex flex-col">
+                    <div class="p-3 bg-rose-950/40 border-b border-rose-500/30 flex items-center justify-between">
+                        <span class="font-extrabold text-rose-200 text-xs">Pending Fee Students (Current)</span>
+                        <span id="colModalDueBadgeCount" class="text-[10px] bg-rose-600 text-white px-2 py-0.5 rounded-full font-extrabold">0</span>
+                    </div>
+                    <div id="colModalPendingListContainer" class="max-h-48 overflow-y-auto divide-y divide-slate-800/70 text-xs">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+
+                <!-- Month-wise Collection History Table -->
+                <div class="bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden flex flex-col">
+                    <div class="p-3 bg-slate-900/70 border-b border-slate-800 flex items-center justify-between">
+                        <span class="font-extrabold text-slate-100 text-xs">Month-Wise Collection Summary</span>
+                        <span class="text-[10px] text-[#F5B82E] font-extrabold">All Months</span>
+                    </div>
+                    <div id="colModalMonthWiseContainer" class="max-h-48 overflow-y-auto divide-y divide-slate-800/70 text-xs">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-2 flex items-center justify-between border-t border-slate-800">
+                <button type="button" onclick="closeCollectionModal(); filterByPendingCard();" class="px-4 py-2 bg-rose-600/20 hover:bg-rose-600 text-rose-300 hover:text-white border border-rose-500/40 font-extrabold rounded-xl text-xs transition cursor-pointer">
+                    Show Only Pending Seats
+                </button>
+                <button type="button" onclick="closeCollectionModal()" class="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs transition cursor-pointer">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: JSON Data Backup (Export / Import) & Storage Manager -->
+    <div id="backupModal" onclick="if(event.target === this) closeBackupModal()" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#0b1326] text-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-[#F5B82E]/50 space-y-4 max-h-[92vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3.5">
+                <div>
+                    <h3 class="font-extrabold text-white text-base">Data Backup &amp; Restore (JSON)</h3>
+                    <p class="text-xs text-emerald-400 font-semibold">Protected with Dual Storage: IndexedDB + LocalStorage</p>
+                </div>
+                <button type="button" onclick="closeBackupModal()" class="text-slate-300 hover:text-white px-2.5 py-1 rounded-xl bg-slate-800 text-xs font-bold cursor-pointer">
+                    Close
+                </button>
+            </div>
+
+            <div class="space-y-4 text-xs text-slate-200">
+                <!-- Storage Status Box -->
+                <div class="bg-slate-950 border border-slate-800 p-3.5 rounded-2xl flex items-center justify-between">
+                    <div>
+                        <p class="font-extrabold text-white">Offline Auto-Save Status</p>
+                        <p id="lastSavedTimeText" class="text-[11px] text-slate-400 mt-0.5">All seat and fee records are saved automatically on this device.</p>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-extrabold text-[10px]">
+                        ACTIVE
+                    </span>
+                </div>
+
+                <!-- 1. Export JSON Backup -->
+                <div class="bg-slate-950 border border-amber-500/35 p-4 rounded-2xl space-y-2.5">
+                    <p class="font-extrabold text-[#F5B82E] text-sm">1. Download Backup File (Export JSON)</p>
+                    <p class="text-slate-300 leading-relaxed">Save a complete copy of all 60 seats, student profiles, and monthly fee history to your phone or computer.</p>
+                    <button type="button" onclick="exportJSONBackup()" class="w-full py-2.5 gold-btn font-extrabold rounded-xl text-xs shadow-lg transition cursor-pointer">
+                        Download JSON Backup File
+                    </button>
+                </div>
+
+                <!-- 2. Import JSON Backup -->
+                <div class="bg-slate-950 border border-emerald-500/35 p-4 rounded-2xl space-y-2.5">
+                    <p class="font-extrabold text-emerald-400 text-sm">2. Restore From Backup File (Import JSON)</p>
+                    <p class="text-slate-300 leading-relaxed">Select a previously downloaded <code>.json</code> backup file to restore all students and fee records instantly.</p>
+                    <input type="file" id="importJsonInput" accept=".json,application/json" onchange="importJSONBackup(event)" class="hidden">
+                    <button type="button" onclick="document.getElementById('importJsonInput').click()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl text-xs shadow-lg transition cursor-pointer">
+                        Select &amp; Restore JSON Backup File
+                    </button>
+                </div>
+
+                <!-- Danger Zone: Reset Option for Mobile Users too -->
+                <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
+                    <span class="text-[11px] text-rose-300 font-semibold">Want to clear all 60 seats completely?</span>
+                    <button type="button" onclick="closeBackupModal(); openResetModal();" class="px-3 py-1.5 bg-rose-500/20 hover:bg-rose-600 text-rose-300 hover:text-white rounded-xl text-[11px] font-bold border border-rose-500/30 transition cursor-pointer">
+                        Reset All Data
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Confirmation / Reset Modal -->
+    <div id="confirmDialog" onclick="if(event.target === this) closeConfirmModal()" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#0b1326] text-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-rose-500/40 text-center space-y-4">
+            <div>
+                <h3 id="confirmTitle" class="font-extrabold text-white text-base">Reset All 60 Seats?</h3>
+                <p id="confirmDesc" class="text-xs text-slate-300 mt-1">Are you sure you want to clear all student records and fee history? This action cannot be undone.</p>
+            </div>
+            <div class="flex items-center gap-2.5 pt-2">
+                <button type="button" onclick="closeConfirmModal()" class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-xl text-xs transition cursor-pointer">
+                    Cancel
+                </button>
+                <button type="button" onclick="executeResetData()" class="flex-1 py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-extrabold rounded-xl text-xs transition shadow-lg cursor-pointer">
+                    Yes, Reset All
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: OFFICIAL FEE RECEIPT PREVIEW & PRINT -->
+    <div id="receiptModal" onclick="if(event.target === this) closeReceiptModal()" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[60] hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-[#0b1326] text-white rounded-3xl max-w-md w-full p-4 sm:p-5 shadow-2xl border border-[#F5B82E]/50 space-y-4 max-h-[94vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div>
+                    <h3 class="font-extrabold text-white text-sm sm:text-base">Official Fee Receipt</h3>
+                    <p class="text-[11px] text-[#F5B82E] font-semibold">Ready to Print or Save as PDF</p>
+                </div>
+                <button type="button" onclick="closeReceiptModal()" class="text-slate-300 hover:text-white px-3 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold cursor-pointer">
+                    Close
+                </button>
+            </div>
+
+            <!-- Printable White Receipt Card with Golden Lotus Logo -->
+            <div id="receiptPrintArea" class="bg-white text-slate-900 rounded-2xl p-5 border-2 border-[#D9971A] shadow-lg">
+                <div class="flex flex-col items-center text-center border-b-2 border-dashed border-slate-300 pb-3.5 mb-3.5">
+                    <div class="w-16 h-16 mb-1.5 flex items-center justify-center">
+                        <img src="96224.png" alt="Gautam Library Logo" class="w-full h-full object-contain hidden" onload="this.classList.remove('hidden'); document.getElementById('modalReceiptSvg').classList.add('hidden');" onerror="this.classList.add('hidden'); document.getElementById('modalReceiptSvg').classList.remove('hidden');">
+                        <svg id="modalReceiptSvg" viewBox="0 90 1024 850" class="w-full h-full">
+                            <defs>
+                                <linearGradient id="recModalGold" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stop-color="#F5B82E" />
+                                    <stop offset="50%" stop-color="#D9971A" />
+                                    <stop offset="100%" stop-color="#9E680C" />
+                                </linearGradient>
+                            </defs>
+                            <path d="M 320,900 C 375,914 435,916 490,916 L 463,795 L 368,855 Z" fill="url(#recModalGold)" />
+                            <path d="M 704,900 C 649,914 589,916 534,916 L 561,795 L 656,855 Z" fill="url(#recModalGold)" />
+                            <g fill="none" stroke="url(#recModalGold)" stroke-width="38" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10">
+                                <path d="M 466,905 C 446,720 462,605 512,510 C 562,605 578,720 558,905" />
+                                <path d="M 418,895 C 232,635 280,340 512,135 C 744,340 792,635 606,895" />
+                                <path d="M 378,895 C 190,715 198,485 198,318 C 358,342 465,418 512,510" />
+                                <path d="M 646,895 C 834,715 826,485 826,318 C 666,342 559,418 512,510" />
+                                <path d="M 472,900 C 175,900 48,725 48,476 C 238,470 388,565 456,725" />
+                                <path d="M 552,900 C 849,900 976,725 976,476 C 786,470 636,565 568,725" />
+                            </g>
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-black tracking-wider text-[#B87910] leading-none">GAUTAM LIBRARY</h2>
+                    <p class="text-[10px] font-extrabold text-[#C58917] tracking-[0.42em] uppercase mt-1">N A P A S A R</p>
+                    <span class="mt-2 px-3 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-400 text-[10px] font-extrabold tracking-wider uppercase">
+                        OFFICIAL FEE RECEIPT
+                    </span>
+                </div>
+
+                <div class="space-y-2 text-xs">
+                    <div class="flex justify-between border-b border-slate-100 pb-1">
+                        <span class="font-bold text-slate-600">Seat Number:</span>
+                        <span id="recSeatNum" class="font-extrabold text-slate-900">#1</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-100 pb-1">
+                        <span class="font-bold text-slate-600">Student Name:</span>
+                        <span id="recStudentName" class="font-extrabold text-slate-900">-</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-100 pb-1">
+                        <span class="font-bold text-slate-600">Father's Name:</span>
+                        <span id="recFatherName" class="font-semibold text-slate-800">-</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-100 pb-1">
+                        <span class="font-bold text-slate-600">Mobile Number:</span>
+                        <span id="recMobile" class="font-semibold text-slate-800">-</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-100 pb-1">
+                        <span class="font-bold text-slate-600">Study Shift:</span>
+                        <span id="recShift" class="font-semibold text-slate-800">-</span>
+                    </div>
+                </div>
+
+                <div class="my-3.5 p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5 text-xs">
+                    <div class="flex justify-between">
+                        <span class="font-bold text-slate-600">Billing Month:</span>
+                        <span id="recBillingMonth" class="font-extrabold text-slate-900">-</span>
+                    </div>
+                    <div id="recSlabRow" class="flex justify-between">
+                        <span class="font-bold text-slate-600">Fee Plan:</span>
+                        <span id="recSlabNote" class="font-bold text-amber-800">-</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="font-bold text-slate-600">Payment Date:</span>
+                        <span id="recPayDate" class="font-semibold text-slate-800">-</span>
+                    </div>
+                    <div class="flex justify-between items-center pt-1.5 border-t border-slate-200">
+                        <span class="font-extrabold text-slate-800">Amount Paid:</span>
+                        <span id="recAmountPaid" class="text-base font-black text-emerald-700">₹0</span>
+                    </div>
+                </div>
+
+                <div class="text-center pt-2 border-t border-slate-200 text-[11px] text-slate-600">
+                    Authorized Signatory<br>
+                    <strong class="text-[#B87910]">Gautam Library, Napasar (Bikaner)</strong><br>
+                    <span class="text-[10px] text-slate-500 font-bold">Contact: +91 98290 12345, 94140 54321</span>
+                </div>
+            </div>
+
+            <!-- Action Buttons: Single Unified Download / Print Menu Button -->
+            <div class="flex flex-wrap items-center justify-between gap-2 pt-1 relative">
+                <button type="button" onclick="closeReceiptModal()" class="px-3.5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-xl text-xs transition cursor-pointer">
+                    Back
+                </button>
+                <div class="relative ml-auto">
+                    <!-- Dropdown Toggle Button -->
+                    <button type="button" onclick="toggleReceiptMenuDropdown()" class="px-4 py-2.5 gold-btn font-extrabold rounded-xl text-xs shadow-lg transition cursor-pointer flex items-center gap-1.5">
+                        <span>⬇ Download / Print Receipt</span>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <!-- Floating Format Options Menu -->
+                    <div id="receiptMenuDropdown" class="hidden absolute right-0 bottom-full mb-2 w-48 bg-slate-900 border border-amber-500/40 rounded-2xl shadow-2xl p-1.5 z-50 space-y-1">
+                        <button type="button" onclick="downloadReceiptAsPDF(); toggleReceiptMenuDropdown();" class="w-full text-left px-3 py-2 hover:bg-slate-800 text-amber-200 text-xs font-bold rounded-xl transition flex items-center gap-2 cursor-pointer">
+                            <span>📥</span> Download PDF
+                        </button>
+                        <button type="button" onclick="downloadReceiptAsImage(); toggleReceiptMenuDropdown();" class="w-full text-left px-3 py-2 hover:bg-slate-800 text-emerald-300 text-xs font-bold rounded-xl transition flex items-center gap-2 cursor-pointer">
+                            <span>🖼️</span> Download PNG
+                        </button>
+                        <button type="button" onclick="triggerReceiptPrintNow(); toggleReceiptMenuDropdown();" class="w-full text-left px-3 py-2 hover:bg-slate-800 text-slate-200 text-xs font-bold rounded-xl transition flex items-center gap-2 cursor-pointer">
+                            <span>🖨️</span> Print Direct
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-950 text-white px-4 py-3 rounded-2xl text-xs font-extrabold shadow-2xl flex items-center gap-2.5 border border-[#F5B82E]">
+        <span class="w-2 h-2 rounded-full bg-[#F5B82E]"></span>
+        <span id="toastMessage">Action completed successfully</span>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        const TOTAL_SEATS = 60;
+        const STORAGE_KEY = 'gautam_library_napasar_v5';
+        const META_STORAGE_KEY = 'gautam_library_napasar_meta_v5';
+        const IDB_NAME = 'GautamLibraryNapasarDB';
+        const IDB_VERSION = 1;
+        const IDB_STORE = 'libraryStore';
+
+        let currentTab = 'grid';
+        let activeSeatNumber = null;
+        let activeModalTab = 'profile';
+        let tempFeeHistory = [];
+        let selectedSlabMonthsCount = 1;
+        let isHandlingPopState = false;
+        let toastTimeoutId = null;
+        let searchRafId = null;
+
+        let libraryData = {};
+
+        const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+        function syncBodyScrollLock() {
+            const modalIds = ['studentModal', 'collectionModal', 'backupModal', 'confirmDialog', 'receiptModal'];
+            const anyOpen = modalIds.some(id => {
+                const el = document.getElementById(id);
+                return el && !el.classList.contains('hidden');
+            });
+            document.body.style.overflow = anyOpen ? 'hidden' : '';
+        }
+
+        // ==========================================
+        // MOBILE / ANDROID HARDWARE BACK BUTTON HANDLER
+        // ==========================================
+        function pushNavigationState(stateName) {
+            if (isHandlingPopState) return;
+            try {
+                window.history.pushState({ viewState: stateName }, '', window.location.pathname + window.location.search);
+            } catch (e) {}
+        }
+
+        window.addEventListener('popstate', (event) => {
+            isHandlingPopState = true;
+            try {
+                // 0. If Receipt Preview Modal is open, close it first
+                const receiptEl = document.getElementById('receiptModal');
+                if (receiptEl && !receiptEl.classList.contains('hidden')) {
+                    closeReceiptModal(true);
+                    return;
+                }
+
+                // 1. If Reset Confirmation Dialog is open, close it
+                const confirmEl = document.getElementById('confirmDialog');
+                if (confirmEl && !confirmEl.classList.contains('hidden')) {
+                    closeConfirmModal(true);
+                    return;
+                }
+
+                // 2. If Student Seat Card Modal is open:
+                const studentModalEl = document.getElementById('studentModal');
+                if (studentModalEl && !studentModalEl.classList.contains('hidden')) {
+                    const vacateBox = document.getElementById('vacateConfirmBox');
+                    if (vacateBox && !vacateBox.classList.contains('hidden')) {
+                        cancelVacateSeat();
+                        return;
+                    }
+                    if (activeModalTab === 'fees') {
+                        switchModalTab('profile', true);
+                        return;
+                    }
+                    closeStudentModal(true);
+                    return;
+                }
+
+                // 3. If Collection Report Modal is open, close it
+                const collectionModalEl = document.getElementById('collectionModal');
+                if (collectionModalEl && !collectionModalEl.classList.contains('hidden')) {
+                    closeCollectionModal(true);
+                    return;
+                }
+
+                // 4. If JSON Backup Modal is open, close it
+                const backupModalEl = document.getElementById('backupModal');
+                if (backupModalEl && !backupModalEl.classList.contains('hidden')) {
+                    closeBackupModal(true);
+                    return;
+                }
+
+                // 5. If user is on "Student List" tab, step back to "60 Seats Grid" tab
+                if (currentTab === 'list') {
+                    switchTab('grid', true);
+                    return;
+                }
+            } finally {
+                isHandlingPopState = false;
+            }
+        });
+
+        // ==========================================
+        // SEASONAL & SHIFT FEE SLAB CONFIGURATION
+        // ==========================================
+        const SEASONAL_FEE_SLABS = {
+            summer: {
+                name: 'Summer Slab (1 Feb – 31 Oct)',
+                shortBadge: '☀️ Summer (Feb–Oct)',
+                full: { 1: 900, 2: 1700, 3: 2500 },
+                half: { 1: 500 }
+            },
+            winter: {
+                name: 'Winter Slab (1 Nov – 31 Jan)',
+                shortBadge: '❄️ Winter (Nov–Jan)',
+                full: { 1: 750, 2: 1500, 3: 2200 },
+                half: { 1: 400 }
+            }
+        };
+
+        function isHalfShift(shiftStr) {
+            if (!shiftStr) return false;
+            const s = String(shiftStr).toLowerCase();
+            return !s.includes('full day');
+        }
+
+        function getSeasonForMonthStr(monthStr) {
+            const norm = normalizeMonthStr(monthStr || getCurrentMonthStr());
+            const parts = norm.split(' ');
+            const mIdx = MONTH_NAMES.indexOf(parts[0]);
+            if (mIdx === 10 || mIdx === 11 || mIdx === 0) {
+                return 'winter';
+            }
+            return 'summer';
+        }
+
+        function getSeasonalSingleMonthRate(monthStr, shiftStr = 'Full Day') {
+            const season = getSeasonForMonthStr(monthStr);
+            const half = isHalfShift(shiftStr);
+            return half ? SEASONAL_FEE_SLABS[season].half[1] : SEASONAL_FEE_SLABS[season].full[1];
+        }
+
+        function getConsecutiveMonthStrings(startMonthStr, count) {
+            const norm = normalizeMonthStr(startMonthStr || getCurrentMonthStr());
+            const parts = norm.split(' ');
+            let mIdx = MONTH_NAMES.indexOf(parts[0]);
+            let year = parseInt(parts[1], 10);
+            if (mIdx === -1 || isNaN(year)) {
+                const now = new Date();
+                mIdx = now.getMonth();
+                year = now.getFullYear();
+            }
+            const result = [];
+            for (let i = 0; i < count; i++) {
+                const curM = (mIdx + i) % 12;
+                const curY = year + Math.floor((mIdx + i) / 12);
+                result.push(`${MONTH_NAMES[curM]} ${curY}`);
+            }
+            return result;
+        }
+
+        function calculateSeasonalPendingAmount(unpaidMonthsList, shiftStr = 'Full Day') {
+            if (!Array.isArray(unpaidMonthsList) || unpaidMonthsList.length === 0) return 0;
+            const half = isHalfShift(shiftStr);
+
+            if (half) {
+                let totalHalf = 0;
+                unpaidMonthsList.forEach(mStr => {
+                    const sKey = getSeasonForMonthStr(mStr);
+                    totalHalf += SEASONAL_FEE_SLABS[sKey].half[1];
+                });
+                return totalHalf;
+            }
+
+            const count = unpaidMonthsList.length;
+            const firstSeason = getSeasonForMonthStr(unpaidMonthsList[0]);
+            const slab = SEASONAL_FEE_SLABS[firstSeason].full;
+
+            if (count === 1) return slab[1];
+            if (count === 2) return slab[2];
+            if (count === 3) return slab[3];
+
+            const bundlesOf3 = Math.floor(count / 3);
+            const remainder = count % 3;
+            let total = bundlesOf3 * slab[3];
+            if (remainder === 1) total += slab[1];
+            if (remainder === 2) total += slab[2];
+            return total;
+        }
+
+        function updateSlabUIForSelectedMonth() {
+            const selectEl = document.getElementById('feeMonthInput');
+            const startMonth = (selectEl && selectEl.value) ? selectEl.value : getCurrentMonthStr();
+            const currentShift = document.getElementById('inputShift') ? document.getElementById('inputShift').value : 'Full Day';
+            const half = isHalfShift(currentShift);
+            const seasonKey = getSeasonForMonthStr(startMonth);
+            const seasonObj = SEASONAL_FEE_SLABS[seasonKey];
+
+            if (half) {
+                selectedSlabMonthsCount = 1;
+            }
+
+            const badgeEl = document.getElementById('detectedSeasonBadge');
+            if (badgeEl) {
+                const shiftTag = half ? 'Half Shift' : 'Full Shift';
+                badgeEl.innerText = `${seasonObj.shortBadge} • ${shiftTag}`;
+                if (seasonKey === 'winter') {
+                    badgeEl.className = "px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-sky-500/20 text-sky-300 border border-sky-400/40";
+                } else {
+                    badgeEl.className = "px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-500/20 text-[#F5B82E] border border-amber-500/40";
+                }
+            }
+
+            const btn1 = document.getElementById('slabBtn1');
+            const btn2 = document.getElementById('slabBtn2');
+            const btn3 = document.getElementById('slabBtn3');
+            const containerEl = document.getElementById('slabPackageButtonsContainer');
+            const labelEl = document.getElementById('slabSectionLabel');
+
+            const p1 = document.getElementById('slabBtn1Price');
+            const p2 = document.getElementById('slabBtn2Price');
+            const p3 = document.getElementById('slabBtn3Price');
+            const s1 = document.getElementById('slabBtn1Sub');
+            const s2 = document.getElementById('slabBtn2Sub');
+            const s3 = document.getElementById('slabBtn3Sub');
+            const t1 = document.getElementById('slabBtn1Title');
+
+            if (half) {
+                if (btn2) btn2.classList.add('hidden');
+                if (btn3) btn3.classList.add('hidden');
+                if (containerEl) containerEl.className = "grid grid-cols-1 gap-2";
+                if (labelEl) labelEl.innerText = `Half Shift Monthly Fee (${currentShift} - No 2M/3M Slabs)`;
+
+                const halfRate = seasonObj.half[1];
+                if (t1) t1.innerText = `Half Shift (1 Month Fixed Fee)`;
+                if (p1) p1.innerText = `₹${halfRate}`;
+                if (s1) s1.innerText = `${startMonth} • ${seasonKey === 'winter' ? 'Winter Half Shift (₹400)' : 'Summer Half Shift (₹500)'}`;
+                if (btn1) btn1.className = "p-3 rounded-xl border-2 border-[#F5B82E] bg-[#F5B82E]/25 text-left transition cursor-pointer shadow-md flex items-center justify-between";
+
+                const amountInput = document.getElementById('feeAmountInput');
+                if (amountInput) amountInput.value = halfRate;
+
+                const previewEl = document.getElementById('selectedPackagePreviewText');
+                if (previewEl) {
+                    previewEl.innerText = `Half Shift (${currentShift}): 1 Month [${startMonth}] • Monthly Fee: ₹${halfRate}`;
+                }
+
+                const submitBtn = document.getElementById('addFeeSubmitBtn');
+                if (submitBtn) {
+                    submitBtn.innerText = `+ Add Half Shift (₹${halfRate})`;
+                }
+            } else {
+                if (btn2) btn2.classList.remove('hidden');
+                if (btn3) btn3.classList.remove('hidden');
+                if (containerEl) containerEl.className = "grid grid-cols-3 gap-2";
+                if (labelEl) labelEl.innerText = `Full Day Shift Fee Slabs (1M / 2M / 3M Packages)`;
+
+                const slab = seasonObj.full;
+                if (t1) t1.innerText = `1 Month Plan`;
+                if (p1) p1.innerText = `₹${slab[1]}`;
+                if (p2) p2.innerText = `₹${slab[2]}`;
+                if (p3) p3.innerText = `₹${slab[3]}`;
+
+                if (s1) s1.innerText = `1 Month (${startMonth})`;
+                const save2 = (slab[1] * 2) - slab[2];
+                if (s2) s2.innerText = save2 > 0 ? `Save ₹${save2} (₹${Math.round(slab[2]/2)}/m)` : `2 Months (₹${Math.round(slab[2]/2)}/m)`;
+                const save3 = (slab[1] * 3) - slab[3];
+                if (s3) s3.innerText = `Save ₹${save3} (₹${Math.round(slab[3]/3)}/m)`;
+
+                [1, 2, 3].forEach(num => {
+                    const btn = document.getElementById(`slabBtn${num}`);
+                    if (!btn) return;
+                    if (num === selectedSlabMonthsCount) {
+                        btn.className = "p-2.5 rounded-xl border-2 border-[#F5B82E] bg-[#F5B82E]/25 text-left transition cursor-pointer shadow-md";
+                    } else {
+                        btn.className = "p-2.5 rounded-xl border border-slate-700 bg-slate-950/70 hover:border-slate-500 text-left transition cursor-pointer";
+                    }
+                });
+
+                const pkgAmount = slab[selectedSlabMonthsCount] || slab[1];
+                const amountInput = document.getElementById('feeAmountInput');
+                if (amountInput) {
+                    amountInput.value = pkgAmount;
+                }
+
+                const monthsCovered = getConsecutiveMonthStrings(startMonth, selectedSlabMonthsCount);
+                const previewEl = document.getElementById('selectedPackagePreviewText');
+                if (previewEl) {
+                    previewEl.innerText = `Full Day Package: ${selectedSlabMonthsCount} Month(s) [${monthsCovered.join(', ')}] • Total Fee: ₹${pkgAmount}`;
+                }
+
+                const submitBtn = document.getElementById('addFeeSubmitBtn');
+                if (submitBtn) {
+                    submitBtn.innerText = `+ Add ${selectedSlabMonthsCount}M (₹${pkgAmount})`;
+                }
+            }
+        }
+
+        function handleShiftChange() {
+            const shiftVal = document.getElementById('inputShift').value;
+            const curMonth = getCurrentMonthStr();
+            const newDefaultRate = getSeasonalSingleMonthRate(curMonth, shiftVal);
+            const feeSelect = document.getElementById('inputMonthlyFee');
+            if (feeSelect) {
+                feeSelect.value = String(newDefaultRate);
+            }
+            handleLiveNameHeaderUpdate();
+            updateSlabUIForSelectedMonth();
+            renderFeeHistoryTable(true);
+        }
+
+        function handleJoiningDateChange() {
+            renderFeeHistoryTable(false);
+        }
+
+        function selectFeeSlabPackage(monthsCount) {
+            const currentShift = document.getElementById('inputShift') ? document.getElementById('inputShift').value : 'Full Day';
+            if (isHalfShift(currentShift)) {
+                selectedSlabMonthsCount = 1;
+            } else {
+                selectedSlabMonthsCount = monthsCount;
+            }
+            updateSlabUIForSelectedMonth();
+        }
+
+        function handleStartingMonthChange() {
+            updateSlabUIForSelectedMonth();
+        }
+
+        function getCurrentMonthStr() {
+            const d = new Date();
+            return `${MONTH_NAMES[d.getMonth()]} ${d.getFullYear()}`;
+        }
+
+        function normalizeMonthStr(rawStr) {
+            if (!rawStr) return '';
+            const clean = String(rawStr).trim();
+            for (let i = 0; i < 12; i++) {
+                const mShort = MONTH_NAMES[i].toLowerCase();
+                const regex = new RegExp(`^${mShort}[a-z]*[\\s\\-\\/]+(\\d{4})$`, 'i');
+                const m = clean.match(regex);
+                if (m) {
+                    return `${MONTH_NAMES[i]} ${m[1]}`;
+                }
+            }
+            const isoMatch = clean.match(/^(\d{4})-(\d{2})/);
+            if (isoMatch) {
+                const mIdx = parseInt(isoMatch[2], 10) - 1;
+                if (mIdx >= 0 && mIdx < 12) {
+                    return `${MONTH_NAMES[mIdx]} ${isoMatch[1]}`;
+                }
+            }
+            return clean;
+        }
+
+        function getLocalTodayISO() {
+            const d = new Date();
+            const yyyy = d.getFullYear();
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            const dd = String(d.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+        }
+
+        function formatShortDate(dateObj) {
+            if (!dateObj || isNaN(dateObj.getTime())) return '';
+            return `${dateObj.getDate()} ${MONTH_NAMES[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
+        }
+
+        function addMonthsToDate(startDate, monthsToAdd) {
+            const d = new Date(startDate.getTime());
+            const targetMonth = d.getMonth() + monthsToAdd;
+            const day = d.getDate();
+            d.setDate(1);
+            d.setMonth(targetMonth);
+            const maxDays = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+            d.setDate(Math.min(day, maxDays));
+            d.setHours(0, 0, 0, 0);
+            return d;
+        }
+
+        function getExpectedMonthsList(joiningDateStr) {
+            const now = new Date();
+            now.setHours(0, 0, 0, 0);
+
+            if (!joiningDateStr) {
+                return [`${MONTH_NAMES[now.getMonth()]} ${now.getFullYear()}`];
+            }
+
+            const parts = String(joiningDateStr).split('-');
+            if (parts.length < 3) {
+                return [`${MONTH_NAMES[now.getMonth()]} ${now.getFullYear()}`];
+            }
+
+            const startYear = parseInt(parts[0], 10);
+            const startMonth = parseInt(parts[1], 10) - 1;
+            const startDay = parseInt(parts[2], 10);
+
+            if (isNaN(startYear) || isNaN(startMonth) || isNaN(startDay)) {
+                return [`${MONTH_NAMES[now.getMonth()]} ${now.getFullYear()}`];
+            }
+
+            const joinDate = new Date(startYear, startMonth, startDay);
+            joinDate.setHours(0, 0, 0, 0);
+
+            if (joinDate > now) {
+                return [`${MONTH_NAMES[startMonth]} ${startYear}`];
+            }
+
+            const list = [];
+            let cycleIndex = 0;
+
+            while (cycleIndex < 60) {
+                const cycleStartDate = addMonthsToDate(joinDate, cycleIndex);
+                const isCycleTriggered = (cycleIndex === 0) ? (now >= cycleStartDate) : (now > cycleStartDate);
+
+                if (isCycleTriggered) {
+                    const label = `${MONTH_NAMES[cycleStartDate.getMonth()]} ${cycleStartDate.getFullYear()}`;
+                    if (!list.includes(label)) {
+                        list.push(label);
+                    }
+                    cycleIndex++;
+                } else {
+                    break;
+                }
+            }
+
+            if (list.length === 0) {
+                list.push(`${MONTH_NAMES[startMonth]} ${startYear}`);
+            }
+            return list;
+        }
+
+        function evaluateStudentFeeStatus(student) {
+            const curMonth = getCurrentMonthStr();
+            const feeHistory = (student && Array.isArray(student.feeHistory)) ? student.feeHistory : [];
+            const paidSet = new Set(feeHistory.map(f => normalizeMonthStr(f.month).toLowerCase()));
+
+            const expectedMonths = getExpectedMonthsList(student ? student.joiningDate : null);
+            const requiredCyclesCount = expectedMonths.length;
+            const paidMonthsCount = feeHistory.length;
+
+            const unpaidByLabel = expectedMonths.filter(m => !paidSet.has(m.toLowerCase()));
+            const cyclesShortfall = Math.max(0, requiredCyclesCount - paidMonthsCount);
+
+            let unpaidMonths = cyclesShortfall > 0 ? unpaidByLabel.slice(-cyclesShortfall) : [];
+            if (cyclesShortfall > 0 && unpaidMonths.length < cyclesShortfall) {
+                const fallbackMonths = getConsecutiveMonthStrings(curMonth, cyclesShortfall);
+                fallbackMonths.forEach(fm => {
+                    if (unpaidMonths.length < cyclesShortfall && !unpaidMonths.includes(fm)) {
+                        unpaidMonths.push(fm);
+                    }
+                });
+            }
+            const pendingMonthsCount = cyclesShortfall;
+
+            let totalPaidAmount = 0;
+            feeHistory.forEach(f => totalPaidAmount += Number(f.amount || 0));
+
+            const studentShift = (student && student.shift) ? student.shift : 'Full Day';
+            const pendingAmount = calculateSeasonalPendingAmount(unpaidMonths, studentShift);
+
+            let nextDueDateStr = '';
+            let billingDay = null;
+            if (student && student.joiningDate) {
+                const parts = String(student.joiningDate).split('-');
+                if (parts.length === 3) {
+                    const jDate = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+                    if (!isNaN(jDate.getTime())) {
+                        billingDay = jDate.getDate();
+                        const nextDueObj = addMonthsToDate(jDate, paidMonthsCount);
+                        nextDueDateStr = formatShortDate(nextDueObj);
+                    }
+                }
+            }
+
+            const isFullyPaidForCurrentMonth = (pendingMonthsCount === 0);
+            const isCurrentMonthPaid = isFullyPaidForCurrentMonth || paidSet.has(curMonth.toLowerCase());
+
+            return {
+                curMonth,
+                isCurrentMonthPaid,
+                isFullyPaidForCurrentMonth,
+                paidMonthsCount,
+                totalPaidAmount,
+                unpaidMonths,
+                pendingMonthsCount,
+                pendingAmount,
+                nextDueDateStr,
+                billingDay
+            };
+        }
+
+        function populateMonthSelectDropdown(joiningDateStr, paidHistory, preserveSelection = false) {
+            const selectEl = document.getElementById('feeMonthInput');
+            if (!selectEl) return;
+
+            const previousValue = preserveSelection ? selectEl.value : '';
+            const curMonth = getCurrentMonthStr();
+            const now = new Date();
+            const curYear = now.getFullYear();
+            const paidSet = new Set((paidHistory || []).map(f => normalizeMonthStr(f.month).toLowerCase()));
+
+            const optionsList = [];
+            for (let y = curYear - 1; y <= curYear + 1; y++) {
+                for (let m = 0; m < 12; m++) {
+                    optionsList.push(`${MONTH_NAMES[m]} ${y}`);
+                }
+            }
+
+            selectEl.innerHTML = '';
+            const expected = getExpectedMonthsList(joiningDateStr);
+            const firstUnpaid = expected.find(m => !paidSet.has(m.toLowerCase())) || curMonth;
+            const targetToSelect = (preserveSelection && previousValue && optionsList.includes(previousValue))
+                ? previousValue
+                : firstUnpaid;
+
+            optionsList.forEach(mStr => {
+                const isAlreadyPaid = paidSet.has(mStr.toLowerCase());
+                const opt = document.createElement('option');
+                opt.value = mStr;
+                if (mStr === curMonth) {
+                    opt.textContent = `${mStr} (Current Month)${isAlreadyPaid ? ' - ✓ Paid' : ' - ● Due'}`;
+                } else {
+                    opt.textContent = `${mStr}${isAlreadyPaid ? ' - ✓ Paid' : ''}`;
+                }
+                if (mStr === targetToSelect) {
+                    opt.selected = true;
+                }
+                selectEl.appendChild(opt);
+            });
+        }
+
+        function setFeeInputToCurrentMonth() {
+            const curMonth = getCurrentMonthStr();
+            const selectEl = document.getElementById('feeMonthInput');
+            if (selectEl) {
+                selectEl.value = curMonth;
+            }
+            updateSlabUIForSelectedMonth();
+        }
+
+        // ==========================================
+        // INDEXEDDB + LOCALSTORAGE DUAL PERSISTENCE (ACTIVE IN BACKGROUND)
+        // ==========================================
+        function openIndexedDB() {
+            return new Promise((resolve) => {
+                if (!window.indexedDB) {
+                    resolve(null);
+                    return;
+                }
+                const request = indexedDB.open(IDB_NAME, IDB_VERSION);
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    if (!db.objectStoreNames.contains(IDB_STORE)) {
+                        db.createObjectStore(IDB_STORE);
+                    }
+                };
+                request.onsuccess = (event) => resolve(event.target.result);
+                request.onerror = () => resolve(null);
+            });
+        }
+
+        async function saveToIndexedDB(dataObj, timestampStr) {
+            try {
+                const db = await openIndexedDB();
+                if (!db) return;
+                const tx = db.transaction(IDB_STORE, 'readwrite');
+                const store = tx.objectStore(IDB_STORE);
+                store.put(dataObj, STORAGE_KEY);
+                store.put({ lastSaved: timestampStr }, META_STORAGE_KEY);
+            } catch (e) {
+                console.warn('IndexedDB save warning:', e);
+            }
+        }
+
+        async function loadFromIndexedDB() {
+            try {
+                const db = await openIndexedDB();
+                if (!db) return null;
+                return new Promise((resolve) => {
+                    const tx = db.transaction(IDB_STORE, 'readonly');
+                    const store = tx.objectStore(IDB_STORE);
+                    const req = store.get(STORAGE_KEY);
+                    req.onsuccess = () => resolve(req.result || null);
+                    req.onerror = () => resolve(null);
+                });
+            } catch (e) {
+                return null;
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadData();
+            renderSeatsGrid();
+            renderStudentTable();
+            updateDashboardStats();
+
+            const today = getLocalTodayISO();
+            const feeDateEl = document.getElementById('feeDateInput');
+            if (feeDateEl) feeDateEl.value = today;
+
+            const curMonthStr = getCurrentMonthStr();
+            const bannerLbl = document.getElementById('currentMonthLabelBanner');
+            if (bannerLbl) bannerLbl.innerText = curMonthStr;
+            const quickBtnLbl = document.getElementById('quickSelectCurMonthBtn');
+            if (quickBtnLbl) quickBtnLbl.innerText = curMonthStr;
+
+            populateMonthSelectDropdown(today, []);
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (!document.getElementById('receiptModal').classList.contains('hidden')) { closeReceiptModal(); return; }
+                if (!document.getElementById('studentModal').classList.contains('hidden')) closeStudentModal();
+                if (!document.getElementById('collectionModal').classList.contains('hidden')) closeCollectionModal();
+                if (!document.getElementById('backupModal').classList.contains('hidden')) closeBackupModal();
+                if (!document.getElementById('confirmDialog').classList.contains('hidden')) closeConfirmModal();
+            }
+        });
+
+        async function loadData() {
+            try {
+                const savedLocal = localStorage.getItem(STORAGE_KEY);
+                const savedIdb = await loadFromIndexedDB();
+
+                if (savedLocal !== null) {
+                    libraryData = JSON.parse(savedLocal);
+                    await saveToIndexedDB(libraryData, new Date().toLocaleString());
+                } else if (savedIdb !== null && typeof savedIdb === 'object') {
+                    libraryData = savedIdb;
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(libraryData));
+                } else {
+                    const curMonth = getCurrentMonthStr();
+                    libraryData = {
+                        1: {
+                            name: "Vikram Singh",
+                            fatherName: "Shri Bhanwar Singh",
+                            mobile: "9829012345",
+                            course: "RAS Foundation",
+                            shift: "Full Day",
+                            monthlyFee: 750,
+                            joiningDate: "2026-09-01",
+                            feeHistory: [
+                                { month: "Sep 2026", amount: 900, date: "2026-09-02", slabNote: "Summer Full Shift 1M (₹900)" },
+                                { month: "Oct 2026", amount: 900, date: "2026-10-03", slabNote: "Summer Full Shift 1M (₹900)" },
+                                { month: curMonth, amount: 750, date: "2026-11-02", slabNote: "Winter Full Shift 1M (₹750)" }
+                            ]
+                        },
+                        2: {
+                            name: "Anjali Sharma",
+                            fatherName: "Shri Manoj Sharma",
+                            mobile: "9414054321",
+                            course: "NEET / AIIMS",
+                            shift: "Morning (6 AM - 12 PM)",
+                            monthlyFee: 500,
+                            joiningDate: "2026-10-01",
+                            feeHistory: [
+                                { month: "Oct 2026", amount: 500, date: "2026-10-05", slabNote: "Summer Half Shift 1M (₹500)" }
+                            ]
+                        }
+                    };
+                    await saveDataToStorage();
+                }
+                updateLastSavedIndicator();
+            } catch(e) {
+                console.error("Error loading storage:", e);
+                libraryData = {};
+            }
+        }
+
+        async function saveDataToStorage() {
+            try {
+                const nowStr = new Date().toLocaleString();
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(libraryData));
+                localStorage.setItem(META_STORAGE_KEY, JSON.stringify({ lastSaved: nowStr }));
+                await saveToIndexedDB(libraryData, nowStr);
+                updateLastSavedIndicator(nowStr);
+            } catch(e) {
+                console.error("Error saving storage:", e);
+                showToast('Warning: Storage limit reached or blocked.');
+            }
+        }
+
+        function updateLastSavedIndicator(timeStr) {
+            try {
+                let displayTime = timeStr;
+                if (!displayTime) {
+                    const metaRaw = localStorage.getItem(META_STORAGE_KEY);
+                    if (metaRaw) {
+                        const meta = JSON.parse(metaRaw);
+                        displayTime = meta.lastSaved;
+                    }
+                }
+                const el = document.getElementById('lastSavedTimeText');
+                if (el && displayTime) {
+                    el.innerText = `Last Auto-Saved: ${displayTime}`;
+                }
+            } catch(e) {}
+        }
+
+        // ==========================================
+        // JSON BACKUP (EXPORT & IMPORT) FUNCTIONS
+        // ==========================================
+        function openBackupModal() {
+            updateLastSavedIndicator();
+            document.getElementById('backupModal').classList.remove('hidden');
+            syncBodyScrollLock();
+            pushNavigationState('backupModal');
+        }
+
+        function closeBackupModal(fromBackBtn = false) {
+            const modal = document.getElementById('backupModal');
+            if (!modal || modal.classList.contains('hidden')) return;
+            modal.classList.add('hidden');
+            syncBodyScrollLock();
+            if (!fromBackBtn && window.history.state && window.history.state.viewState === 'backupModal') {
+                isHandlingPopState = true;
+                window.history.back();
+                setTimeout(() => { isHandlingPopState = false; }, 50);
+            }
+        }
+
+        function exportJSONBackup() {
+            try {
+                const backupPayload = {
+                    app: "Gautam Library Napasar - 60 Seat Management System",
+                    version: 5,
+                    exportedAt: new Date().toISOString(),
+                    totalSeats: TOTAL_SEATS,
+                    data: libraryData
+                };
+                const jsonString = JSON.stringify(backupPayload, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                const datePart = getLocalTodayISO();
+                a.href = url;
+                a.download = `Gautam_Library_Napasar_Backup_${datePart}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showToast('JSON Backup file downloaded successfully!');
+            } catch (err) {
+                console.error(err);
+                showToast('Failed to export JSON backup.');
+            }
+        }
+
+        function importJSONBackup(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    const importedSeats = (parsed && parsed.data && typeof parsed.data === 'object')
+                        ? parsed.data
+                        : parsed;
+
+                    if (!importedSeats || typeof importedSeats !== 'object') {
+                        showToast('Invalid JSON backup file format.');
+                        return;
+                    }
+
+                    libraryData = importedSeats;
+                    await saveDataToStorage();
+                    handleSearch();
+                    updateDashboardStats();
+                    closeBackupModal();
+                    showToast('Backup restored & saved permanently!');
+                } catch (err) {
+                    console.error('JSON Import error:', err);
+                    showToast('Error: Selected file is not a valid JSON backup.');
+                } finally {
+                    event.target.value = '';
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function updateDashboardStats() {
+            let bookedCount = 0;
+            let activeCount = 0;
+            let pendingCount = 0;
+            let allTimeTotalCollection = 0;
+            let currentMonthCollected = 0;
+            let currentMonthExpected = 0;
+            let currentMonthPending = 0;
+            let totalArrearsPending = 0;
+
+            const curMonth = getCurrentMonthStr();
+
+            for (let i = 1; i <= TOTAL_SEATS; i++) {
+                const student = libraryData[i];
+                if (student && student.name && student.name.trim() !== '') {
+                    bookedCount++;
+                    activeCount++;
+                    const monthlyRate = getSeasonalSingleMonthRate(curMonth, student.shift);
+
+                    const status = evaluateStudentFeeStatus(student);
+                    if (!status.isFullyPaidForCurrentMonth) {
+                        pendingCount++;
+                    }
+                    totalArrearsPending += status.pendingAmount;
+                    allTimeTotalCollection += status.totalPaidAmount;
+
+                    const feeHistory = Array.isArray(student.feeHistory) ? student.feeHistory : [];
+                    let paidThisMonth = 0;
+                    feeHistory.forEach(f => {
+                        if (normalizeMonthStr(f.month).toLowerCase() === curMonth.toLowerCase()) {
+                            paidThisMonth += Number(f.amount || 0);
+                        }
+                    });
+
+                    currentMonthCollected += paidThisMonth;
+                    if (!status.isCurrentMonthPaid) {
+                        currentMonthPending += monthlyRate;
+                    }
+                }
+            }
+            currentMonthExpected = currentMonthCollected + currentMonthPending;
+
+            const statBookedEl = document.getElementById('statBooked');
+            const statAvailableEl = document.getElementById('statAvailable');
+            const statActiveStudentsEl = document.getElementById('statActiveStudents');
+            const statPendingCountEl = document.getElementById('statPendingCount');
+            const statPendingAmountSubEl = document.getElementById('statPendingAmountSub');
+            const statTotalCollectionEl = document.getElementById('statTotalCollection');
+            const statCurMonthTitleEl = document.getElementById('statCurMonthTitle');
+            const statCurMonthSubEl = document.getElementById('statCurMonthSub');
+
+            if (statBookedEl) statBookedEl.innerText = bookedCount;
+            if (statAvailableEl) statAvailableEl.innerText = TOTAL_SEATS - bookedCount;
+            if (statActiveStudentsEl) statActiveStudentsEl.innerText = activeCount;
+            if (statPendingCountEl) statPendingCountEl.innerText = pendingCount;
+            if (statPendingAmountSubEl) statPendingAmountSubEl.innerText = `Due: ₹${totalArrearsPending}`;
+
+            if (statCurMonthTitleEl) statCurMonthTitleEl.innerText = `${curMonth} Fee`;
+            if (statTotalCollectionEl) statTotalCollectionEl.innerText = `₹${currentMonthCollected}`;
+            if (statCurMonthSubEl) statCurMonthSubEl.innerText = `Due: ₹${currentMonthPending} • Total: ₹${allTimeTotalCollection}`;
+        }
+
+        function filterByPendingCard() {
+            const filterEl = document.getElementById('statusFilter');
+            if (filterEl) {
+                filterEl.value = filterEl.value === 'pending' ? 'all' : 'pending';
+                handleSearch();
+                showToast(filterEl.value === 'pending' ? 'Showing seats with Pending Fee' : 'Showing all 60 seats');
+            }
+        }
+
+        function openCollectionModal() {
+            const curMonth = getCurrentMonthStr();
+            let curMonthCollected = 0;
+            let curMonthPending = 0;
+            let curMonthTarget = 0;
+            let curMonthPaidStudents = 0;
+            let curMonthDueStudents = 0;
+            let totalArrears = 0;
+            let allTimeTotal = 0;
+            let allTimeReceipts = 0;
+
+            const pendingStudentsList = [];
+            const monthWiseMap = {};
+
+            for (let i = 1; i <= TOTAL_SEATS; i++) {
+                const student = libraryData[i];
+                if (!student || !student.name || student.name.trim() === '') continue;
+
+                const rate = getSeasonalSingleMonthRate(curMonth, student.shift);
+
+                const status = evaluateStudentFeeStatus(student);
+                totalArrears += status.pendingAmount;
+                allTimeTotal += status.totalPaidAmount;
+
+                const history = Array.isArray(student.feeHistory) ? student.feeHistory : [];
+                allTimeReceipts += history.length;
+
+                let paidForCur = 0;
+                history.forEach(f => {
+                    const normM = normalizeMonthStr(f.month) || 'Other';
+                    const amt = Number(f.amount || 0);
+                    if (!monthWiseMap[normM]) {
+                        monthWiseMap[normM] = { count: 0, amount: 0 };
+                    }
+                    monthWiseMap[normM].count += 1;
+                    monthWiseMap[normM].amount += amt;
+
+                    if (normM.toLowerCase() === curMonth.toLowerCase()) {
+                        paidForCur += amt;
+                    }
+                });
+
+                curMonthCollected += paidForCur;
+                if (status.isCurrentMonthPaid) {
+                    curMonthPaidStudents++;
+                } else {
+                    curMonthDueStudents++;
+                    curMonthPending += rate;
+                }
+
+                if (!status.isFullyPaidForCurrentMonth) {
+                    pendingStudentsList.push({
+                        seat: i,
+                        name: student.name,
+                        unpaidMonths: status.unpaidMonths,
+                        pendingAmount: status.pendingAmount
+                    });
+                }
+            }
+            curMonthTarget = curMonthCollected + curMonthPending;
+
+            document.getElementById('colModalCurMonthLabel').innerText = `${curMonth} Collected`;
+            document.getElementById('colModalCurMonthCollected').innerText = `₹${curMonthCollected}`;
+            document.getElementById('colModalCurMonthStudentsPaid').innerText = `${curMonthPaidStudents} Students Paid`;
+
+            document.getElementById('colModalCurMonthPending').innerText = `₹${curMonthPending}`;
+            document.getElementById('colModalCurMonthStudentsDue').innerText = `${curMonthDueStudents} Students Due (${curMonth})`;
+
+            document.getElementById('colModalMonthlyTarget').innerText = `₹${curMonthTarget}`;
+            document.getElementById('colModalTotalPendingAllMonths').innerText = `All Pending Dues: ₹${totalArrears}`;
+
+            document.getElementById('colModalAllTimeTotal').innerText = `₹${allTimeTotal}`;
+            document.getElementById('colModalAllTimeEntries').innerText = `${allTimeReceipts} Monthly Payments`;
+
+            const pct = curMonthTarget > 0 ? Math.min(100, Math.round((curMonthCollected / curMonthTarget) * 100)) : 0;
+            document.getElementById('colModalProgressMonthName').innerText = curMonth;
+            document.getElementById('colModalProgressPercent').innerText = `${pct}% Collected (₹${curMonthCollected} / ₹${curMonthTarget})`;
+            document.getElementById('colModalProgressBar').style.width = `${pct}%`;
+
+            document.getElementById('colModalDueBadgeCount').innerText = pendingStudentsList.length;
+            const pendingContainer = document.getElementById('colModalPendingListContainer');
+            pendingContainer.innerHTML = '';
+            if (pendingStudentsList.length === 0) {
+                pendingContainer.innerHTML = `<div class="p-5 text-center text-emerald-400 font-bold">All enrolled students have paid for ${curMonth}!</div>`;
+            } else {
+                pendingStudentsList.forEach(item => {
+                    const row = document.createElement('div');
+                    row.className = "p-2.5 hover:bg-slate-900/60 flex items-center justify-between gap-2";
+                    row.innerHTML = `
+                        <div class="min-w-0">
+                            <p class="font-extrabold text-white truncate"><span class="text-[#F5B82E]">#${item.seat}</span> ${escapeHtml(item.name)}</p>
+                            <p class="text-[10px] text-rose-300 truncate">Due: ${escapeHtml(item.unpaidMonths.join(', '))}</p>
+                        </div>
+                        <div class="flex items-center gap-2 flex-shrink-0">
+                            <span class="font-extrabold text-rose-400">₹${item.pendingAmount}</span>
+                            <button type="button" onclick="closeCollectionModal(); openStudentModal(${item.seat}); switchModalTab('fees');" class="px-2 py-1 gold-btn font-bold rounded-lg text-[10px] cursor-pointer">
+                                + Pay
+                            </button>
+                        </div>
+                    `;
+                    pendingContainer.appendChild(row);
+                });
+            }
+
+            const monthContainer = document.getElementById('colModalMonthWiseContainer');
+            monthContainer.innerHTML = '';
+            const monthKeys = Object.keys(monthWiseMap);
+            if (monthKeys.length === 0) {
+                monthContainer.innerHTML = `<div class="p-5 text-center text-slate-400 font-semibold">No fee entries recorded yet.</div>`;
+            } else {
+                monthKeys.reverse().forEach(mKey => {
+                    const info = monthWiseMap[mKey];
+                    const isCur = mKey.toLowerCase() === curMonth.toLowerCase();
+                    const row = document.createElement('div');
+                    row.className = "p-2.5 hover:bg-slate-900/60 flex items-center justify-between";
+                    row.innerHTML = `
+                        <div class="flex items-center gap-2">
+                            <span class="font-extrabold text-white">${escapeHtml(mKey)}</span>
+                            ${isCur ? '<span class="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 text-[9px] font-bold rounded">Current</span>' : ''}
+                        </div>
+                        <div class="text-right">
+                            <span class="font-extrabold text-emerald-400">₹${info.amount}</span>
+                            <span class="text-[10px] text-slate-400 ml-1">(${info.count} students)</span>
+                        </div>
+                    `;
+                    monthContainer.appendChild(row);
+                });
+            }
+
+            document.getElementById('collectionModal').classList.remove('hidden');
+            syncBodyScrollLock();
+            pushNavigationState('collectionModal');
+        }
+
+        function closeCollectionModal(fromBackBtn = false) {
+            const modal = document.getElementById('collectionModal');
+            if (!modal || modal.classList.contains('hidden')) return;
+            modal.classList.add('hidden');
+            syncBodyScrollLock();
+            if (!fromBackBtn && window.history.state && window.history.state.viewState === 'collectionModal') {
+                isHandlingPopState = true;
+                window.history.back();
+                setTimeout(() => { isHandlingPopState = false; }, 50);
+            }
+        }
+
+        function switchTab(tab, fromBackBtn = false) {
+            const prevTab = currentTab;
+            currentTab = tab;
+            const gridView = document.getElementById('seatsGridView');
+            const listView = document.getElementById('studentListView');
+            const btnGrid = document.getElementById('tabBtnGrid');
+            const btnList = document.getElementById('tabBtnList');
+
+            if (tab === 'grid') {
+                gridView.classList.remove('hidden');
+                listView.classList.add('hidden');
+                btnGrid.className = "flex-1 md:flex-none px-5 py-2.5 rounded-xl font-extrabold text-xs transition gold-btn cursor-pointer";
+                btnList.className = "flex-1 md:flex-none px-5 py-2.5 rounded-xl font-bold text-xs transition bg-slate-900/80 text-slate-200 hover:bg-slate-800 border border-slate-700/80 cursor-pointer";
+                handleSearch();
+                if (!fromBackBtn && prevTab === 'list' && window.history.state && window.history.state.viewState === 'listTab') {
+                    isHandlingPopState = true;
+                    window.history.back();
+                    setTimeout(() => { isHandlingPopState = false; }, 50);
+                }
+            } else {
+                gridView.classList.add('hidden');
+                listView.classList.remove('hidden');
+                btnList.className = "flex-1 md:flex-none px-5 py-2.5 rounded-xl font-extrabold text-xs transition gold-btn cursor-pointer";
+                btnGrid.className = "flex-1 md:flex-none px-5 py-2.5 rounded-xl font-bold text-xs transition bg-slate-900/80 text-slate-200 hover:bg-slate-800 border border-slate-700/80 cursor-pointer";
+                handleSearch();
+                if (!fromBackBtn && prevTab !== 'list') {
+                    pushNavigationState('listTab');
+                }
+            }
+        }
+
+        function renderSeatsGrid(filterText = '', statusFilter = 'all') {
+            const container = document.getElementById('seatsGridContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const fragment = document.createDocumentFragment();
+            let bookedCount = 0;
+
+            for (let i = 1; i <= TOTAL_SEATS; i++) {
+                const student = libraryData[i];
+                const isBooked = student && student.name && student.name.trim() !== '';
+                if (isBooked) bookedCount++;
+
+                const feeStatus = isBooked ? evaluateStudentFeeStatus(student) : null;
+                const isPaidForCurrentMonth = feeStatus ? feeStatus.isFullyPaidForCurrentMonth : false;
+
+                if (statusFilter === 'available' && isBooked) continue;
+                if (statusFilter === 'booked' && !isBooked) continue;
+                if (statusFilter === 'pending' && (!isBooked || isPaidForCurrentMonth)) continue;
+
+                if (filterText) {
+                    const query = filterText.toLowerCase();
+                    if (isBooked) {
+                        const match = student.name.toLowerCase().includes(query) ||
+                                      (student.mobile && student.mobile.includes(query)) ||
+                                      (student.course && student.course.toLowerCase().includes(query)) ||
+                                      String(i) === query;
+                        if (!match) continue;
+                    } else {
+                        if (String(i) !== query) continue;
+                    }
+                }
+
+                const card = document.createElement('div');
+
+                if (!isBooked) {
+                    // VACANT SEAT CARD: Sleek Dark Glass with Emerald Accent
+                    card.className = "p-2.5 sm:p-3 rounded-2xl border border-emerald-500/35 bg-gradient-to-b from-slate-900/90 via-[#0a1326]/95 to-emerald-950/35 hover:border-emerald-400 hover:shadow-[0_10px_25px_-5px_rgba(16,185,129,0.3)] seat-card-hover flex flex-col items-center justify-between cursor-pointer h-28 sm:h-32 group relative overflow-hidden";
+                    card.onclick = () => openStudentModal(i);
+
+                    card.innerHTML = `
+                        <div class="w-full flex items-center justify-between z-10">
+                            <span class="px-2 py-0.5 rounded-lg bg-emerald-500/15 border border-emerald-400/35 text-emerald-300 text-xs sm:text-sm font-black leading-none">
+                                ${i}
+                            </span>
+                            <span class="flex items-center gap-1 text-[9px] font-bold text-emerald-400 bg-emerald-950/80 px-1.5 py-0.5 rounded-md border border-emerald-500/30">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Free
+                            </span>
+                        </div>
+
+                        <div class="my-auto flex items-center justify-center group-hover:scale-110 transition duration-200 z-10">
+                            <svg viewBox="0 0 80 80" class="w-11 h-11 sm:w-12 sm:h-12 drop-shadow-[0_4px_8px_rgba(16,185,129,0.22)]">
+                                <defs>
+                                    <linearGradient id="chairGrad${i}" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#34d399" />
+                                        <stop offset="100%" stop-color="#059669" />
+                                    </linearGradient>
+                                </defs>
+                                <circle cx="40" cy="40" r="30" fill="#10b981" fill-opacity="0.1" />
+                                <rect x="24" y="14" width="32" height="24" rx="7" fill="url(#chairGrad${i})" fill-opacity="0.35" stroke="#34d399" stroke-width="3.5"/>
+                                <path d="M16,32 L23,32 L23,48 L57,48 L57,32 L64,32 C66.5,32 68,34 68,36.5 L68,50 C68,53.5 65,55 61,55 L19,55 C15,55 12,53.5 12,50 L12,36.5 C12,34 13.5,32 16,32 Z" fill="url(#chairGrad${i})"/>
+                                <line x1="40" y1="55" x2="40" y2="65" stroke="#34d399" stroke-width="4" stroke-linecap="round"/>
+                                <path d="M25,66 L55,66" stroke="#34d399" stroke-width="4" stroke-linecap="round"/>
+                                <circle cx="26" cy="68" r="2.5" fill="#6ee7b7"/>
+                                <circle cx="54" cy="68" r="2.5" fill="#6ee7b7"/>
+                            </svg>
+                        </div>
+
+                        <div class="w-full text-center z-10">
+                            <p class="text-[10px] sm:text-[11px] font-extrabold text-emerald-300/90 tracking-wide truncate leading-tight group-hover:text-white transition">
+                                + Assign Seat
+                            </p>
+                        </div>
+                    `;
+                } else {
+                    // OCCUPIED SEAT CARD: Modern Luxury Gold vs Crimson Alert
+                    const isPaid = isPaidForCurrentMonth;
+                    const cardTheme = isPaid
+                        ? "bg-gradient-to-br from-[#F7C33E] via-[#D9971A] to-[#9E680C] border-amber-200/60 text-white shadow-[0_10px_22px_-6px_rgba(245,184,46,0.5)]"
+                        : "bg-gradient-to-br from-rose-600 via-red-600 to-rose-900 border-rose-300/60 text-white shadow-[0_10px_22px_-6px_rgba(225,29,72,0.65)]";
+
+                    const badgeTheme = isPaid
+                        ? "bg-slate-950 text-[#F5B82E]"
+                        : "bg-white text-rose-700";
+
+                    const dueBadgeLabel = feeStatus.pendingMonthsCount > 1
+                        ? `Due (${feeStatus.pendingMonthsCount}M)`
+                        : `Due`;
+
+                    const statusBadge = isPaid
+                        ? `<span class="px-1.5 py-0.5 rounded-md bg-slate-950/45 text-[9px] font-extrabold text-amber-100 border border-white/25">Paid</span>`
+                        : `<span class="px-1.5 py-0.5 rounded-md bg-yellow-300 text-rose-950 text-[9px] font-black animate-pulse">${dueBadgeLabel}</span>`;
+
+                    const subText = isPaid
+                        ? (feeStatus.nextDueDateStr ? `Valid till ${feeStatus.nextDueDateStr}` : `${feeStatus.curMonth} Paid`)
+                        : (feeStatus.nextDueDateStr ? `Due since ${feeStatus.nextDueDateStr}` : `${feeStatus.unpaidMonths[feeStatus.unpaidMonths.length - 1] || feeStatus.curMonth} Due`);
+
+                    card.className = `p-2.5 sm:p-3 rounded-2xl border seat-card-hover flex flex-col items-center justify-between cursor-pointer h-28 sm:h-32 group relative overflow-hidden ${cardTheme}`;
+                    card.onclick = () => openStudentModal(i);
+
+                    card.innerHTML = `
+                        <div class="absolute -top-6 -right-6 w-16 h-16 bg-white/15 rounded-full blur-md pointer-events-none"></div>
+
+                        <div class="w-full flex items-center justify-between z-10">
+                            <span class="px-2 py-0.5 rounded-lg ${badgeTheme} text-xs sm:text-sm font-black shadow-sm leading-none">
+                                ${i}
+                            </span>
+                            ${statusBadge}
+                        </div>
+
+                        <div class="my-auto flex items-center justify-center group-hover:scale-110 transition duration-200 z-10">
+                            <svg viewBox="0 0 80 80" class="w-11 h-11 sm:w-12 sm:h-12 drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]">
+                                <circle cx="40" cy="40" r="30" fill="#ffffff" fill-opacity="0.16" />
+                                <circle cx="40" cy="24" r="11" fill="#ffffff"/>
+                                <path d="M18,56 C18,39 62,39 62,56 Z" fill="#ffffff" fill-opacity="0.92"/>
+                                <path d="M22,50 L40,58 L58,50 L58,64 L40,71 L22,64 Z" fill="#0f172a" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round"/>
+                                <line x1="40" y1="58" x2="40" y2="71" stroke="#ffffff" stroke-width="2.5"/>
+                            </svg>
+                        </div>
+
+                        <div class="w-full text-center z-10 space-y-0.5">
+                            <p class="font-extrabold text-[11px] sm:text-xs text-white truncate w-full leading-tight drop-shadow-xs" title="${escapeHtml(student.name)}">
+                                ${escapeHtml(student.name)}
+                            </p>
+                            <p class="text-[9px] font-bold text-white/90 truncate w-full leading-none">
+                                ${escapeHtml(subText)}
+                            </p>
+                        </div>
+                    `;
+                }
+
+                fragment.appendChild(card);
+            }
+
+            container.appendChild(fragment);
+            document.getElementById('statBooked').innerText = bookedCount;
+            document.getElementById('statAvailable').innerText = TOTAL_SEATS - bookedCount;
+        }
+
+        function handleSearch() {
+            if (searchRafId) cancelAnimationFrame(searchRafId);
+            searchRafId = requestAnimationFrame(() => {
+                const searchEl = document.getElementById('searchInput');
+                const filterEl = document.getElementById('statusFilter');
+                const query = searchEl ? searchEl.value.trim() : '';
+                const statusFilter = filterEl ? filterEl.value : 'all';
+                if (currentTab === 'grid') {
+                    renderSeatsGrid(query, statusFilter);
+                } else {
+                    renderStudentTable(query, statusFilter);
+                }
+            });
+        }
+
+        function renderStudentTable(filterText = '', statusFilter = 'all') {
+            const tbody = document.getElementById('studentTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            const fragment = document.createDocumentFragment();
+            let count = 0;
+
+            for (let i = 1; i <= TOTAL_SEATS; i++) {
+                const student = libraryData[i];
+                if (!student || !student.name || student.name.trim() === '') continue;
+
+                const feeStatus = evaluateStudentFeeStatus(student);
+                let monthNames = [];
+                if (student.feeHistory) {
+                    student.feeHistory.forEach(f => {
+                        if (f.month) monthNames.push(f.month);
+                    });
+                }
+
+                if (statusFilter === 'available') continue;
+                if (statusFilter === 'pending' && feeStatus.isFullyPaidForCurrentMonth) continue;
+
+                if (filterText) {
+                    const q = filterText.toLowerCase();
+                    const match = student.name.toLowerCase().includes(q) || 
+                                  (student.mobile && student.mobile.includes(q)) ||
+                                  (student.course && student.course.toLowerCase().includes(q)) ||
+                                  String(i) === q;
+                    if (!match) continue;
+                }
+
+                count++;
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-900/50 transition";
+                
+                const statusPill = feeStatus.isFullyPaidForCurrentMonth
+                    ? `<span class="inline-block px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-extrabold">✓ Paid (${feeStatus.nextDueDateStr ? 'Valid till ' + feeStatus.nextDueDateStr : feeStatus.paidMonthsCount + 'M'})</span>`
+                    : `<span class="inline-block px-2 py-0.5 rounded-full bg-rose-500/25 text-rose-300 border border-rose-500/40 text-[10px] font-extrabold animate-pulse">Due since ${feeStatus.nextDueDateStr || feeStatus.unpaidMonths.join(', ')} (₹${feeStatus.pendingAmount})</span>`;
+
+                tr.innerHTML = `
+                    <td class="p-3.5 font-extrabold text-[#F5B82E]">Seat #${i}</td>
+                    <td class="p-3.5 font-bold text-white">${escapeHtml(student.name)}<br><span class="text-[10px] text-slate-400 font-normal">Father: ${escapeHtml(student.fatherName || '-')}</span></td>
+                    <td class="p-3.5 font-semibold text-slate-200">${escapeHtml(student.mobile || '-')}</td>
+                    <td class="p-3.5 text-slate-200">${escapeHtml(student.course || 'Self Study')}<br><span class="text-[10px] text-slate-400">${escapeHtml(student.shift || '')}</span></td>
+                    <td class="p-3.5">
+                        ${statusPill}
+                        <p class="text-[10px] text-slate-400 truncate max-w-[180px] mt-0.5">Paid: ${monthNames.length ? escapeHtml(monthNames.join(', ')) : 'None'}</p>
+                    </td>
+                    <td class="p-3.5 font-extrabold text-emerald-400">₹${feeStatus.totalPaidAmount}</td>
+                    <td class="p-3.5 text-center">
+                        <div class="flex items-center justify-center gap-2">
+                            <button onclick="openStudentModal(${i})" class="px-3 py-1.5 gold-btn font-bold rounded-xl text-xs transition cursor-pointer shadow-xs">
+                                Manage
+                            </button>
+                            <button onclick="sendWhatsAppReminderRecord(${i})" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition cursor-pointer shadow-xs">
+                                WhatsApp
+                            </button>
+                        </div>
+                    </td>
+                `;
+                fragment.appendChild(tr);
+            }
+
+            if (count === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-slate-400 font-semibold">No matching student records found. Click any seat card in the grid to assign a student.</td></tr>`;
+            } else {
+                tbody.appendChild(fragment);
+            }
+
+            document.getElementById('studentCountBadge').innerText = `${count} Students`;
+            updateDashboardStats();
+        }
+
+        function updateModalHeaderTitle(seatNum, studentName, course, shift) {
+            const titleEl = document.getElementById('modalTitle');
+            const subTitleEl = document.getElementById('modalSubTitle');
+            const cleanName = (studentName || '').trim();
+
+            if (cleanName !== '') {
+                titleEl.innerText = cleanName;
+                const extraInfo = [course, shift].filter(Boolean).join(' • ');
+                subTitleEl.innerText = extraInfo ? `Seat #${seatNum} • ${extraInfo}` : `Allocated to Seat #${seatNum}`;
+            } else {
+                titleEl.innerText = `Seat #${seatNum} Management`;
+                subTitleEl.innerText = `Vacant Seat • Enter student details below to assign`;
+            }
+        }
+
+        function handleLiveNameHeaderUpdate() {
+            if (!activeSeatNumber) return;
+            const liveName = document.getElementById('inputName').value;
+            const liveCourse = document.getElementById('inputCourse').value.trim();
+            const liveShift = document.getElementById('inputShift').value;
+            updateModalHeaderTitle(activeSeatNumber, liveName, liveCourse, liveShift);
+        }
+
+        function openStudentModal(seatNum) {
+            activeSeatNumber = seatNum;
+            const student = libraryData[seatNum] || {
+                name: '',
+                fatherName: '',
+                mobile: '',
+                course: '',
+                shift: 'Full Day',
+                monthlyFee: 900,
+                joiningDate: getLocalTodayISO(),
+                feeHistory: []
+            };
+
+            const shiftVal = student.shift || 'Full Day';
+            document.getElementById('modalSeatBadge').innerText = `#${seatNum}`;
+            updateModalHeaderTitle(seatNum, student.name, student.course, shiftVal);
+            
+            document.getElementById('inputName').value = student.name || '';
+            document.getElementById('inputFatherName').value = student.fatherName || '';
+            document.getElementById('inputMobile').value = student.mobile || '';
+            document.getElementById('inputCourse').value = student.course || '';
+            document.getElementById('inputShift').value = shiftVal;
+            document.getElementById('inputMonthlyFee').value = student.monthlyFee || getSeasonalSingleMonthRate(getCurrentMonthStr(), shiftVal);
+            document.getElementById('inputJoiningDate').value = student.joiningDate || getLocalTodayISO();
+
+            selectedSlabMonthsCount = 1;
+            const feeDateEl = document.getElementById('feeDateInput');
+            if (feeDateEl) feeDateEl.value = getLocalTodayISO();
+            const feeAmountEl = document.getElementById('feeAmountInput');
+            if (feeAmountEl) feeAmountEl.value = getSeasonalSingleMonthRate(getCurrentMonthStr(), shiftVal);
+
+            document.getElementById('vacateConfirmBox').classList.add('hidden');
+
+            const vacateBtn = document.getElementById('btnVacateSeat');
+            if (student.name && student.name.trim() !== '') {
+                vacateBtn.classList.remove('hidden');
+            } else {
+                vacateBtn.classList.add('hidden');
+            }
+
+            tempFeeHistory = student.feeHistory ? JSON.parse(JSON.stringify(student.feeHistory)) : [];
+            renderFeeHistoryTable();
+            switchModalTab('profile', true);
+
+            const modal = document.getElementById('studentModal');
+            const wasHidden = modal.classList.contains('hidden');
+            modal.classList.remove('hidden');
+            syncBodyScrollLock();
+            if (wasHidden) {
+                pushNavigationState('studentModal');
+            }
+        }
+
+        function closeStudentModal(fromBackBtn = false) {
+            const modal = document.getElementById('studentModal');
+            if (!modal || modal.classList.contains('hidden')) return;
+
+            const wasOnFeesTab = (activeModalTab === 'fees');
+            modal.classList.add('hidden');
+            document.getElementById('vacateConfirmBox').classList.add('hidden');
+            activeSeatNumber = null;
+            activeModalTab = 'profile';
+            syncBodyScrollLock();
+            handleSearch();
+            updateDashboardStats();
+
+            if (!fromBackBtn && window.history.state) {
+                const st = window.history.state.viewState;
+                if (st === 'studentModalFees') {
+                    isHandlingPopState = true;
+                    window.history.go(-2);
+                    setTimeout(() => { isHandlingPopState = false; }, 80);
+                } else if (st === 'studentModal' || wasOnFeesTab) {
+                    isHandlingPopState = true;
+                    window.history.back();
+                    setTimeout(() => { isHandlingPopState = false; }, 50);
+                }
+            }
+        }
+
+        function switchModalTab(tab, skipHistory = false) {
+            const prevModalTab = activeModalTab;
+            activeModalTab = tab;
+            const btnProfile = document.getElementById('modalTabBtnProfile');
+            const btnFees = document.getElementById('modalTabBtnFees');
+            const contentProfile = document.getElementById('modalTabProfileContent');
+            const contentFees = document.getElementById('modalTabFeesContent');
+
+            if (tab === 'profile') {
+                btnProfile.className = "flex-1 py-2.5 px-3 rounded-xl font-extrabold text-xs transition gold-btn shadow-md cursor-pointer";
+                btnFees.className = "flex-1 py-2.5 px-3 rounded-xl font-bold text-xs transition text-slate-300 hover:text-white cursor-pointer";
+                contentProfile.classList.remove('hidden');
+                contentFees.classList.add('hidden');
+                if (!skipHistory && prevModalTab === 'fees' && window.history.state && window.history.state.viewState === 'studentModalFees') {
+                    isHandlingPopState = true;
+                    window.history.back();
+                    setTimeout(() => { isHandlingPopState = false; }, 50);
+                }
+            } else {
+                btnFees.className = "flex-1 py-2.5 px-3 rounded-xl font-extrabold text-xs transition gold-btn shadow-md cursor-pointer";
+                btnProfile.className = "flex-1 py-2.5 px-3 rounded-xl font-bold text-xs transition text-slate-300 hover:text-white cursor-pointer";
+                contentFees.classList.remove('hidden');
+                contentProfile.classList.add('hidden');
+                renderFeeHistoryTable();
+                if (!skipHistory && prevModalTab !== 'fees') {
+                    pushNavigationState('studentModalFees');
+                }
+            }
+        }
+
+        function saveStudentProfile(event) {
+            event.preventDefault();
+            if (!activeSeatNumber) return;
+
+            const name = document.getElementById('inputName').value.trim();
+            const fatherName = document.getElementById('inputFatherName').value.trim();
+            const mobile = document.getElementById('inputMobile').value.trim();
+            const course = document.getElementById('inputCourse').value.trim();
+            const shift = document.getElementById('inputShift').value;
+            const monthlyFee = Number(document.getElementById('inputMonthlyFee').value) || getSeasonalSingleMonthRate(getCurrentMonthStr(), shift);
+            const joiningDate = document.getElementById('inputJoiningDate').value;
+
+            libraryData[activeSeatNumber] = {
+                name,
+                fatherName,
+                mobile,
+                course,
+                shift,
+                monthlyFee,
+                joiningDate,
+                feeHistory: tempFeeHistory
+            };
+
+            saveDataToStorage();
+            showToast(`Seat #${activeSeatNumber} (${name}) saved successfully!`);
+            closeStudentModal();
+        }
+
+        function askVacateCurrentSeat() {
+            const box = document.getElementById('vacateConfirmBox');
+            if (box) {
+                box.classList.remove('hidden');
+                box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        function cancelVacateSeat() {
+            const box = document.getElementById('vacateConfirmBox');
+            if (box) box.classList.add('hidden');
+        }
+
+        function confirmVacateSeatNow() {
+            if (!activeSeatNumber) return;
+            const seatToClear = activeSeatNumber;
+            delete libraryData[seatToClear];
+            saveDataToStorage();
+            showToast(`Seat #${seatToClear} is now Vacant.`);
+            closeStudentModal();
+        }
+
+        function addMonthlyFeeEntry() {
+            const rawMonthVal = document.getElementById('feeMonthInput').value.trim();
+            const startMonthVal = normalizeMonthStr(rawMonthVal);
+            const totalPackageAmount = Number(document.getElementById('feeAmountInput').value) || 0;
+            const dateVal = document.getElementById('feeDateInput').value || getLocalTodayISO();
+
+            if (!startMonthVal) {
+                showToast('Please select the starting billing month.');
+                return;
+            }
+            if (totalPackageAmount <= 0) {
+                showToast('Please enter a valid fee amount greater than ₹0.');
+                return;
+            }
+
+            const currentShift = document.getElementById('inputShift') ? document.getElementById('inputShift').value : 'Full Day';
+            const half = isHalfShift(currentShift);
+            const effectiveMonthsCount = half ? 1 : selectedSlabMonthsCount;
+            const targetMonths = getConsecutiveMonthStrings(startMonthVal, effectiveMonthsCount);
+
+            const duplicateMonths = targetMonths.filter(mStr =>
+                tempFeeHistory.some(f => normalizeMonthStr(f.month).toLowerCase() === mStr.toLowerCase())
+            );
+            if (duplicateMonths.length > 0) {
+                showToast(`Fee for ${duplicateMonths.join(', ')} is already recorded!`);
+                return;
+            }
+
+            const basePerMonth = Math.floor(totalPackageAmount / effectiveMonthsCount);
+            const remainder = totalPackageAmount - (basePerMonth * effectiveMonthsCount);
+            const seasonTag = getSeasonForMonthStr(startMonthVal) === 'winter' ? 'Winter' : 'Summer';
+            const shiftTypeLabel = half ? 'Half Shift' : 'Full Shift';
+            const slabLabel = effectiveMonthsCount > 1
+                ? `${seasonTag} ${shiftTypeLabel} ${effectiveMonthsCount}M Slab (₹${totalPackageAmount})`
+                : `${seasonTag} ${shiftTypeLabel} 1M (₹${totalPackageAmount})`;
+
+            targetMonths.forEach((mStr, idx) => {
+                const thisMonthAmt = idx === 0 ? (basePerMonth + remainder) : basePerMonth;
+                tempFeeHistory.push({
+                    month: mStr,
+                    amount: thisMonthAmt,
+                    date: dateVal,
+                    slabNote: slabLabel
+                });
+            });
+
+            if (activeSeatNumber) {
+                const currentName = document.getElementById('inputName').value.trim() || (libraryData[activeSeatNumber] && libraryData[activeSeatNumber].name) || '';
+                if (currentName) {
+                    if (!libraryData[activeSeatNumber]) {
+                        libraryData[activeSeatNumber] = {};
+                    }
+                    libraryData[activeSeatNumber].name = currentName;
+                    libraryData[activeSeatNumber].fatherName = document.getElementById('inputFatherName').value.trim();
+                    libraryData[activeSeatNumber].mobile = document.getElementById('inputMobile').value.trim();
+                    libraryData[activeSeatNumber].course = document.getElementById('inputCourse').value.trim();
+                    libraryData[activeSeatNumber].shift = currentShift;
+                    libraryData[activeSeatNumber].monthlyFee = Number(document.getElementById('inputMonthlyFee').value) || getSeasonalSingleMonthRate(startMonthVal, currentShift);
+                    libraryData[activeSeatNumber].joiningDate = document.getElementById('inputJoiningDate').value;
+                    libraryData[activeSeatNumber].feeHistory = tempFeeHistory;
+                    saveDataToStorage();
+                    handleSearch();
+                    updateDashboardStats();
+                }
+            }
+
+            selectedSlabMonthsCount = 1;
+            renderFeeHistoryTable();
+            showToast(`${targetMonths.join(', ')} (Total ₹${totalPackageAmount}) recorded!`);
+        }
+
+        function deleteFeeEntry(index) {
+            tempFeeHistory.splice(index, 1);
+            if (activeSeatNumber && libraryData[activeSeatNumber]) {
+                libraryData[activeSeatNumber].feeHistory = tempFeeHistory;
+                saveDataToStorage();
+                handleSearch();
+                updateDashboardStats();
+            }
+            renderFeeHistoryTable();
+            showToast('Fee payment entry removed.');
+        }
+
+        function renderFeeHistoryTable(preserveDropdownSelection = false) {
+            const tbody = document.getElementById('feeHistoryTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            const curJoiningDate = document.getElementById('inputJoiningDate') ? document.getElementById('inputJoiningDate').value : null;
+            const curShift = document.getElementById('inputShift') ? document.getElementById('inputShift').value : 'Full Day';
+            const curMonthlyRate = document.getElementById('inputMonthlyFee') ? Number(document.getElementById('inputMonthlyFee').value || getSeasonalSingleMonthRate(getCurrentMonthStr(), curShift)) : 900;
+
+            populateMonthSelectDropdown(curJoiningDate, tempFeeHistory, preserveDropdownSelection);
+            updateSlabUIForSelectedMonth();
+
+            let totalPaid = 0;
+            tempFeeHistory.forEach((f, idx) => {
+                totalPaid += Number(f.amount || 0);
+                const isCurM = normalizeMonthStr(f.month).toLowerCase() === getCurrentMonthStr().toLowerCase();
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-900/60 transition";
+                tr.innerHTML = `
+                    <td class="p-3 font-extrabold text-white">
+                        ${escapeHtml(f.month)}
+                        ${isCurM ? '<span class="ml-1.5 px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[9px] font-bold">Current Month</span>' : ''}
+                        ${f.slabNote ? `<div class="text-[9px] text-amber-300 font-semibold mt-0.5">${escapeHtml(f.slabNote)}</div>` : ''}
+                    </td>
+                    <td class="p-3 font-extrabold text-emerald-400">₹${f.amount}</td>
+                    <td class="p-3 text-slate-300">${escapeHtml(f.date)}</td>
+                    <td class="p-3 text-center">
+                        <div class="flex items-center justify-center gap-2">
+                            <button type="button" onclick="printReceiptByIndex(${idx})" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold rounded-lg text-[11px] cursor-pointer">
+                                Receipt
+                            </button>
+                            <button type="button" onclick="deleteFeeEntry(${idx})" class="px-2.5 py-1 bg-rose-500/20 hover:bg-rose-600 text-rose-300 hover:text-white font-bold rounded-lg text-[11px] cursor-pointer">
+                                Delete
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            if (tempFeeHistory.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-5 text-center text-slate-400 text-xs font-medium">No fee payments recorded yet.</td></tr>`;
+            }
+
+            const tempStudentObj = {
+                joiningDate: curJoiningDate,
+                shift: curShift,
+                monthlyFee: curMonthlyRate,
+                feeHistory: tempFeeHistory
+            };
+            const status = evaluateStudentFeeStatus(tempStudentObj);
+
+            const pillEl = document.getElementById('currentMonthStatusPill');
+            const pendingDetailEl = document.getElementById('feePendingMonthsDetail');
+            const bannerEl = document.getElementById('feeModalStatusBanner');
+
+            if (status.isFullyPaidForCurrentMonth) {
+                if (pillEl) {
+                    pillEl.className = "px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40";
+                    pillEl.innerText = `✓ ACTIVE & PAID`;
+                }
+                if (pendingDetailEl) {
+                    pendingDetailEl.className = "text-[11px] text-emerald-300 font-semibold mt-0.5";
+                    pendingDetailEl.innerText = status.nextDueDateStr
+                        ? `Valid till ${status.nextDueDateStr} (Next fee pending after ${status.nextDueDateStr})`
+                        : `All billing cycles up to date!`;
+                }
+                if (bannerEl) {
+                    bannerEl.className = "bg-slate-950 border border-emerald-500/50 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-3";
+                }
+            } else {
+                if (pillEl) {
+                    pillEl.className = "px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-500/25 text-rose-300 border border-rose-500/50 animate-pulse";
+                    pillEl.innerText = `● ${status.pendingMonthsCount} MONTH(S) DUE (₹${status.pendingAmount})`;
+                }
+                if (pendingDetailEl) {
+                    pendingDetailEl.className = "text-[11px] text-rose-300 font-bold mt-0.5";
+                    pendingDetailEl.innerText = `Fee Overdue since ${status.nextDueDateStr || ''} • Pending: ${status.unpaidMonths.join(', ')}`;
+                }
+                if (bannerEl) {
+                    bannerEl.className = "bg-rose-950/40 border border-rose-500/60 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-3";
+                }
+            }
+
+            document.getElementById('feeCountBadge').innerText = `${tempFeeHistory.length} Months`;
+            document.getElementById('feeLedgerSummaryText').innerText = `${tempFeeHistory.length} Months Paid (Total ₹${totalPaid})`;
+        }
+
+        function sendWhatsAppReminderActive() {
+            const name = document.getElementById('inputName').value.trim() || 'Student';
+            const mobile = document.getElementById('inputMobile').value.trim();
+            const curShift = document.getElementById('inputShift') ? document.getElementById('inputShift').value : 'Full Day';
+            const monthlyFee = Number(document.getElementById('inputMonthlyFee').value) || getSeasonalSingleMonthRate(getCurrentMonthStr(), curShift);
+            const joiningDate = document.getElementById('inputJoiningDate').value;
+
+            if (!mobile) {
+                showToast('Please enter the student mobile number first.');
+                return;
+            }
+
+            const status = evaluateStudentFeeStatus({
+                joiningDate,
+                shift: curShift,
+                monthlyFee,
+                feeHistory: tempFeeHistory
+            });
+
+            const curSeason = getSeasonForMonthStr(status.curMonth);
+            const half = isHalfShift(curShift);
+            const slabText = half
+                ? `Half Shift Fee (${curShift}): ₹${SEASONAL_FEE_SLABS[curSeason].half[1]}/Month`
+                : `Full Shift Slabs: 1 Month ₹${SEASONAL_FEE_SLABS[curSeason].full[1]}, 2 Months ₹${SEASONAL_FEE_SLABS[curSeason].full[2]}, 3 Months ₹${SEASONAL_FEE_SLABS[curSeason].full[3]}`;
+
+            let msg = '';
+            if (!status.isFullyPaidForCurrentMonth) {
+                msg = `Dear ${name}, greetings from *GAUTAM LIBRARY, NAPASAR*. For your Seat #${activeSeatNumber} (${curShift}), your fee for *${status.unpaidMonths.join(', ')}* (Pending Amount: *₹${status.pendingAmount}*) is due. ${slabText}. Kindly submit your fee at the earliest. Thank you!`;
+            } else {
+                msg = `Dear ${name}, greetings from *GAUTAM LIBRARY, NAPASAR*. Your fee for Seat #${activeSeatNumber} (${curShift}) up to *${status.curMonth}* (Total Paid: ₹${status.totalPaidAmount}) is received and up to date. Thank you!`;
+            }
+
+            const cleanPhone = mobile.replace(/\D/g, '').slice(-10);
+            const url = `https://wa.me/91${cleanPhone}?text=${encodeURIComponent(msg)}`;
+            window.open(url, '_blank');
+        }
+
+        function sendWhatsAppReminderRecord(seatNum) {
+            const student = libraryData[seatNum];
+            if (!student || !student.mobile) {
+                showToast('No mobile number saved for this student.');
+                return;
+            }
+
+            const status = evaluateStudentFeeStatus(student);
+            const curShift = student.shift || 'Full Day';
+            const curSeason = getSeasonForMonthStr(status.curMonth);
+            const half = isHalfShift(curShift);
+            const slabText = half
+                ? `Half Shift Fee (${curShift}): ₹${SEASONAL_FEE_SLABS[curSeason].half[1]}/Month`
+                : `Full Shift Slabs: 1 Month ₹${SEASONAL_FEE_SLABS[curSeason].full[1]}, 2 Months ₹${SEASONAL_FEE_SLABS[curSeason].full[2]}, 3 Months ₹${SEASONAL_FEE_SLABS[curSeason].full[3]}`;
+
+            let msg = '';
+            if (!status.isFullyPaidForCurrentMonth) {
+                msg = `Dear ${student.name}, greetings from *GAUTAM LIBRARY, NAPASAR*. For your Seat #${seatNum} (${curShift}), your fee for *${status.unpaidMonths.join(', ')}* (Pending Amount: *₹${status.pendingAmount}*) is due. ${slabText}. Kindly submit your fee at the earliest. Thank you!`;
+            } else {
+                msg = `Dear ${student.name}, greetings from *GAUTAM LIBRARY, NAPASAR*. Your fee for Seat #${seatNum} (${curShift}) up to *${status.curMonth}* (Total Paid: ₹${status.totalPaidAmount}) is received and up to date. Thank you!`;
+            }
+
+            const cleanPhone = student.mobile.replace(/\D/g, '').slice(-10);
+            const url = `https://wa.me/91${cleanPhone}?text=${encodeURIComponent(msg)}`;
+            window.open(url, '_blank');
+        }
+
+        function printReceiptByIndex(idx) {
+            const item = tempFeeHistory[idx];
+            if (!item) return;
+            printReceipt(item.month, item.amount, item.date, item.slabNote || '');
+        }
+
+        function printReceipt(month, amount, date, slabNote = '') {
+            const studentName = document.getElementById('inputName').value.trim() || 'Student';
+            const fatherName = document.getElementById('inputFatherName').value.trim() || '-';
+            const seatNum = String(activeSeatNumber || '-');
+            const mobile = document.getElementById('inputMobile').value.trim() || '-';
+            const shift = document.getElementById('inputShift') ? document.getElementById('inputShift').value : 'Full Day';
+
+            document.getElementById('recSeatNum').innerText = `#${seatNum}`;
+            document.getElementById('recStudentName').innerText = studentName;
+            document.getElementById('recFatherName').innerText = fatherName;
+            document.getElementById('recMobile').innerText = mobile;
+            document.getElementById('recShift').innerText = shift;
+            document.getElementById('recBillingMonth').innerText = month || '-';
+            document.getElementById('recPayDate').innerText = date || '-';
+            document.getElementById('recAmountPaid').innerText = `₹${Number(amount || 0)}`;
+
+            const slabRow = document.getElementById('recSlabRow');
+            const slabEl = document.getElementById('recSlabNote');
+            if (slabNote) {
+                slabRow.classList.remove('hidden');
+                slabEl.innerText = slabNote;
+            } else {
+                slabRow.classList.add('hidden');
+            }
+
+            const recModal = document.getElementById('receiptModal');
+            recModal.classList.remove('hidden');
+            syncBodyScrollLock();
+            pushNavigationState('receiptModal');
+        }
+
+        function closeReceiptModal(fromBackBtn = false) {
+            const modal = document.getElementById('receiptModal');
+            if (!modal || modal.classList.contains('hidden')) return;
+            modal.classList.add('hidden');
+            syncBodyScrollLock();
+            if (!fromBackBtn && window.history.state && window.history.state.viewState === 'receiptModal') {
+                isHandlingPopState = true;
+                window.history.back();
+                setTimeout(() => { isHandlingPopState = false; }, 50);
+            }
+        }
+
+        // High-Resolution Native HTML5 Canvas Receipt Generator (100% Offline & Direct Download)
+        function generateReceiptCanvas() {
+            const canvas = document.createElement('canvas');
+            const width = 800;
+            const height = 1040;
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+
+            // 1. White Background & Gold Outer Border
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, width, height);
+
+            ctx.strokeStyle = '#D9971A';
+            ctx.lineWidth = 8;
+            ctx.strokeRect(20, 20, width - 40, height - 40);
+
+            ctx.strokeStyle = '#F5B82E';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(32, 32, width - 64, height - 64);
+
+            // 2. Draw Exact Traced Golden Lotus Logo at Top Center
+            ctx.save();
+            const logoScale = 0.135;
+            ctx.translate(width / 2 - (1024 * logoScale) / 2, 42);
+            ctx.scale(logoScale, logoScale);
+
+            const goldGrad = ctx.createLinearGradient(0, 90, 0, 920);
+            goldGrad.addColorStop(0, '#F5B82E');
+            goldGrad.addColorStop(0.5, '#D9971A');
+            goldGrad.addColorStop(1, '#9E680C');
+
+            ctx.fillStyle = goldGrad;
+            const pLeft = new Path2D("M 320,900 C 375,914 435,916 490,916 L 463,795 L 368,855 Z");
+            const pRight = new Path2D("M 704,900 C 649,914 589,916 534,916 L 561,795 L 656,855 Z");
+            ctx.fill(pLeft);
+            ctx.fill(pRight);
+
+            ctx.strokeStyle = goldGrad;
+            ctx.lineWidth = 38;
+            ctx.lineCap = 'butt';
+            ctx.lineJoin = 'miter';
+            ctx.miterLimit = 10;
+
+            const strokePaths = [
+                "M 466,905 C 446,720 462,605 512,510 C 562,605 578,720 558,905",
+                "M 418,895 C 232,635 280,340 512,135 C 744,340 792,635 606,895",
+                "M 378,895 C 190,715 198,485 198,318 C 358,342 465,418 512,510",
+                "M 646,895 C 834,715 826,485 826,318 C 666,342 559,418 512,510",
+                "M 472,900 C 175,900 48,725 48,476 C 238,470 388,565 456,725",
+                "M 552,900 C 849,900 976,725 976,476 C 786,470 636,565 568,725"
+            ];
+            strokePaths.forEach(d => ctx.stroke(new Path2D(d)));
+            ctx.restore();
+
+            // 3. Header Brand Text
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#B87910';
+            ctx.font = '900 42px sans-serif';
+            ctx.fillText('GAUTAM LIBRARY', width / 2, 222);
+
+            ctx.fillStyle = '#C58917';
+            ctx.font = '800 18px sans-serif';
+            ctx.fillText('N   A   P   A   S   A   R', width / 2, 250);
+
+            // Badge Pill
+            ctx.fillStyle = '#FEF3C7';
+            ctx.strokeStyle = '#F59E0B';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(width / 2 - 135, 268, 270, 36, 18);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#78350F';
+            ctx.font = '800 16px sans-serif';
+            ctx.fillText('OFFICIAL FEE RECEIPT', width / 2, 292);
+
+            // Dashed Divider
+            ctx.save();
+            ctx.setLineDash([8, 6]);
+            ctx.strokeStyle = '#CBD5E1';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(60, 326);
+            ctx.lineTo(width - 60, 326);
+            ctx.stroke();
+            ctx.restore();
+
+            // 4. Student Details Rows
+            const seatNum = document.getElementById('recSeatNum').innerText || '-';
+            const studentName = document.getElementById('recStudentName').innerText || '-';
+            const fatherName = document.getElementById('recFatherName').innerText || '-';
+            const mobile = document.getElementById('recMobile').innerText || '-';
+            const shift = document.getElementById('recShift').innerText || '-';
+            const billingMonth = document.getElementById('recBillingMonth').innerText || '-';
+            const slabNote = document.getElementById('recSlabNote').innerText || '-';
+            const payDate = document.getElementById('recPayDate').innerText || '-';
+            const amountPaid = document.getElementById('recAmountPaid').innerText || '₹0';
+
+            const details = [
+                ['Seat Number:', seatNum],
+                ['Student Name:', studentName],
+                ["Father's Name:", fatherName],
+                ['Mobile Number:', mobile],
+                ['Study Shift:', shift]
+            ];
+
+            let yPos = 374;
+            details.forEach(([label, val]) => {
+                ctx.textAlign = 'left';
+                ctx.fillStyle = '#475569';
+                ctx.font = '700 22px sans-serif';
+                ctx.fillText(label, 70, yPos);
+
+                ctx.textAlign = 'right';
+                ctx.fillStyle = '#0F172A';
+                ctx.font = '800 22px sans-serif';
+                ctx.fillText(String(val).slice(0, 34), width - 70, yPos);
+
+                ctx.strokeStyle = '#F1F5F9';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(70, yPos + 16);
+                ctx.lineTo(width - 70, yPos + 16);
+                ctx.stroke();
+
+                yPos += 56;
+            });
+
+            // 5. Payment Summary Box
+            const boxTop = yPos + 10;
+            const boxHeight = 235;
+            ctx.fillStyle = '#F8FAFC';
+            ctx.strokeStyle = '#E2E8F0';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(65, boxTop, width - 130, boxHeight, 20);
+            ctx.fill();
+            ctx.stroke();
+
+            let py = boxTop + 48;
+            const payRows = [
+                ['Billing Month:', billingMonth, '#0F172A'],
+                ['Fee Plan:', slabNote, '#92400E'],
+                ['Payment Date:', payDate, '#1E293B']
+            ];
+            payRows.forEach(([lbl, val, col]) => {
+                ctx.textAlign = 'left';
+                ctx.fillStyle = '#475569';
+                ctx.font = '700 21px sans-serif';
+                ctx.fillText(lbl, 95, py);
+
+                ctx.textAlign = 'right';
+                ctx.fillStyle = col;
+                ctx.font = '800 21px sans-serif';
+                ctx.fillText(String(val).slice(0, 36), width - 95, py);
+                py += 46;
+            });
+
+            ctx.strokeStyle = '#CBD5E1';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(95, py - 20);
+            ctx.lineTo(width - 95, py - 20);
+            ctx.stroke();
+
+            ctx.textAlign = 'left';
+            ctx.fillStyle = '#0F172A';
+            ctx.font = '900 26px sans-serif';
+            ctx.fillText('Amount Paid:', 95, py + 24);
+
+            ctx.textAlign = 'right';
+            ctx.fillStyle = '#047857';
+            ctx.font = '900 34px sans-serif';
+            ctx.fillText(amountPaid, width - 95, py + 26);
+
+            // 6. Footer Signature
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#64748B';
+            ctx.font = '600 17px sans-serif';
+            ctx.fillText('Authorized Signatory', width / 2, height - 110);
+
+            ctx.fillStyle = '#B87910';
+            ctx.font = '800 20px sans-serif';
+            ctx.fillText('Gautam Library, Napasar (Bikaner)', width / 2, height - 82);
+
+            ctx.fillStyle = '#475569';
+            ctx.font = '700 15px sans-serif';
+            ctx.fillText('Contact: +91 98290 12345, 94140 54321', width / 2, height - 54);
+
+            return canvas;
+        }
+
+        function toggleReceiptMenuDropdown() {
+            const menu = document.getElementById('receiptMenuDropdown');
+            if (menu) {
+                menu.classList.toggle('hidden');
+            }
+        }
+
+        function getCleanReceiptFileName(ext) {
+            const rawName = (document.getElementById('recStudentName').innerText || 'Student').replace(/[^a-zA-Z0-9]/g, '_');
+            const rawSeat = (document.getElementById('recSeatNum').innerText || 'Seat').replace(/[^a-zA-Z0-9]/g, '');
+            const rawMonth = (document.getElementById('recBillingMonth').innerText || '').replace(/[^a-zA-Z0-9]/g, '_');
+            return `Gautam_Library_Receipt_${rawSeat}_${rawName}_${rawMonth}.${ext}`;
+        }
+
+        // Direct 1-Click PNG Receipt Image Download (Works 100% Offline on All Phones & Browsers)
+        function downloadReceiptAsImage() {
+            try {
+                const canvas = generateReceiptCanvas();
+                canvas.toBlob((blob) => {
+                    if (!blob) {
+                        showToast('Could not generate receipt image.');
+                        return;
+                    }
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = getCleanReceiptFileName('png');
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    setTimeout(() => URL.revokeObjectURL(url), 1000);
+                    showToast('Receipt Image (.PNG) downloaded to your device!');
+                }, 'image/png');
+            } catch (e) {
+                console.error(e);
+                showToast('Error downloading receipt image.');
+            }
+        }
+
+        // Direct 1-Click PDF File Download (Uses html2pdf or falls back to high-res image download)
+        async function downloadReceiptAsPDF() {
+            const btn = document.getElementById('btnDownloadPdf');
+            const originalText = btn ? btn.innerHTML : '⬇ Download PDF';
+            try {
+                if (btn) btn.innerHTML = '<span>Downloading...</span>';
+
+                if (typeof window.html2pdf !== 'undefined') {
+                    const canvas = generateReceiptCanvas();
+                    const imgData = canvas.toDataURL('image/jpeg', 0.98);
+
+                    const tempContainer = document.createElement('div');
+                    tempContainer.style.width = '400px';
+                    tempContainer.style.background = '#ffffff';
+                    tempContainer.innerHTML = `<img src="${imgData}" style="width:100%;height:auto;display:block;">`;
+
+                    const opt = {
+                        margin: 8,
+                        filename: getCleanReceiptFileName('pdf'),
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: { scale: 2, useCORS: true },
+                        jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' }
+                    };
+
+                    await window.html2pdf().set(opt).from(tempContainer).save();
+                    showToast('Receipt PDF downloaded successfully!');
+                } else {
+                    // Offline fallback: download PNG directly if CDN wasn't loaded
+                    downloadReceiptAsImage();
+                }
+            } catch (e) {
+                console.error('PDF Download fallback to Image:', e);
+                downloadReceiptAsImage();
+            } finally {
+                if (btn) btn.innerHTML = originalText;
+            }
+        }
+
+        function triggerReceiptPrintNow() {
+            try {
+                const canvas = generateReceiptCanvas();
+                const dataUrl = canvas.toDataURL('image/png');
+
+                let printFrame = document.getElementById('hiddenReceiptPrintFrame');
+                if (!printFrame) {
+                    printFrame = document.createElement('iframe');
+                    printFrame.id = 'hiddenReceiptPrintFrame';
+                    printFrame.style.position = 'fixed';
+                    printFrame.style.right = '0';
+                    printFrame.style.bottom = '0';
+                    printFrame.style.width = '0';
+                    printFrame.style.height = '0';
+                    printFrame.style.border = '0';
+                    document.body.appendChild(printFrame);
+                }
+
+                const doc = printFrame.contentWindow.document;
+                doc.open();
+                doc.write(`<!DOCTYPE html><html><head><title>Print Receipt</title><style>body{margin:0;display:flex;justify-content:center;align-items:flex-start;padding:15px;}img{max-width:380px;width:100%;height:auto;}</style></head><body><img src="${dataUrl}" onload="setTimeout(function(){window.focus();window.print();},150);"></body></html>`);
+                doc.close();
+            } catch (e) {
+                window.print();
+            }
+        }
+
+        function exportCSV() {
+            let csv = "Seat Number,Student Name,Father Name,Mobile,Course,Shift,Joining Date,Total Paid Months,Paid Month Names,Total Fee Paid\n";
+            const csvSafe = (val) => String(val || '').replace(/"/g, '""');
+            
+            for (let i = 1; i <= TOTAL_SEATS; i++) {
+                const s = libraryData[i];
+                if (s && s.name && s.name.trim() !== '') {
+                    let totalPaid = 0;
+                    let mNames = [];
+                    let monthsCount = s.feeHistory ? s.feeHistory.length : 0;
+                    if (s.feeHistory) {
+                        s.feeHistory.forEach(f => {
+                            totalPaid += Number(f.amount || 0);
+                            if (f.month) mNames.push(f.month);
+                        });
+                    }
+                    csv += `"${i}","${csvSafe(s.name)}","${csvSafe(s.fatherName)}","${csvSafe(s.mobile)}","${csvSafe(s.course)}","${csvSafe(s.shift)}","${csvSafe(s.joiningDate)}","${monthsCount}","${csvSafe(mNames.join(' | '))}","${totalPaid}"\n`;
+                }
+            }
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Gautam_Library_Napasar_Report_${getLocalTodayISO()}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('Excel (CSV) Report downloaded!');
+        }
+
+        function openResetModal() {
+            document.getElementById('confirmDialog').classList.remove('hidden');
+            syncBodyScrollLock();
+            pushNavigationState('confirmDialog');
+        }
+        function closeConfirmModal(fromBackBtn = false) {
+            const modal = document.getElementById('confirmDialog');
+            if (!modal || modal.classList.contains('hidden')) return;
+            modal.classList.add('hidden');
+            syncBodyScrollLock();
+            if (!fromBackBtn && window.history.state && window.history.state.viewState === 'confirmDialog') {
+                isHandlingPopState = true;
+                window.history.back();
+                setTimeout(() => { isHandlingPopState = false; }, 50);
+            }
+        }
+        async function executeResetData() {
+            libraryData = {};
+            await saveDataToStorage();
+            closeConfirmModal();
+            handleSearch();
+            updateDashboardStats();
+            showToast('All 60 seats have been reset.');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toastMessage');
+            if (!toast || !msgEl) return;
+            msgEl.innerText = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            if (toastTimeoutId) clearTimeout(toastTimeoutId);
+            toastTimeoutId = setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
